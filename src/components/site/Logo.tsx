@@ -5,7 +5,7 @@
  */
 export function NPMark({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 74 52" className={className} aria-hidden="true" fill="currentColor">
+    <svg viewBox="0 0 69.25 52" className={className} aria-hidden="true" fill="currentColor">
       {/* N: left stem, diagonal into the shared stem */}
       <rect x="0" y="2" width="7.5" height="48" />
       <polygon points="0,2 8.5,2 42.5,50 34,50" />

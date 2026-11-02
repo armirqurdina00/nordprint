@@ -28,9 +28,15 @@ export const RULES: Record<UploadKind, { types: Record<string, string>; maxMb: n
 export const MAX_INQUIRY_FILES = 5;
 
 export class UploadError extends Error {
-  constructor(public kind: "type" | "size" | "failed", public detail: string, public mb = 0) {
+  constructor(public kind: "type" | "size" | "failed" | "storage", public detail: string, public mb = 0) {
     super(
-      kind === "type" ? `Filtypen ${detail} stöds inte.` : kind === "size" ? `${detail} är större än ${mb} MB.` : `Uppladdningen av ${detail} misslyckades.`
+      kind === "type"
+        ? `Filtypen ${detail} stöds inte.`
+        : kind === "size"
+          ? `${detail} är större än ${mb} MB.`
+          : kind === "storage"
+            ? "Filen kunde inte sparas eftersom Vercel Blob inte är kopplat. Lägg till Blob under Storage i Vercel-projektet och gör en ny deploy."
+            : `Uppladdningen av ${detail} misslyckades.`
     );
   }
 }

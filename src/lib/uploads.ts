@@ -2,9 +2,9 @@ import "server-only";
 import { promises as fs } from "fs";
 import path from "path";
 import { del } from "@vercel/blob";
-import { baseName, checkFile, isBlobUrl, type UploadKind } from "./upload-rules";
+import { baseName, checkFile, isBlobUrl, UploadError, type UploadKind } from "./upload-rules";
 
-export { UploadError } from "./upload-rules";
+export { UploadError };
 
 /**
  * Two modes:
@@ -13,6 +13,9 @@ export { UploadError } from "./upload-rules";
  * - Local: files are posted with the form and written to data/uploads, served by /uploads/[...path].
  */
 export const directUploads = !!process.env.BLOB_READ_WRITE_TOKEN;
+
+/** Deployed on Vercel without Blob: the disk is read-only, so files cannot be stored anywhere. */
+export const uploadsUnavailable = !directUploads && !!process.env.VERCEL;
 
 export const UPLOAD_DIR = path.join(process.cwd(), "data", "uploads");
 
@@ -31,6 +34,7 @@ export const MIME: Record<string, string> = {
 export async function saveUpload(file: File | null, kind: UploadKind): Promise<string | null> {
   if (!file || typeof file === "string" || file.size === 0) return null;
   const { ext } = checkFile(file, kind);
+  if (uploadsUnavailable) throw new UploadError("storage", file.name);
   const dir = path.join(UPLOAD_DIR, kind);
   await fs.mkdir(dir, { recursive: true });
   const name = `${Date.now().toString(36)}-${baseName(file.name)}${ext}`;

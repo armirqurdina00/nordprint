@@ -2,8 +2,8 @@ export function formatPrice(sek: number, lang: "sv" | "en" = "sv") {
   return new Intl.NumberFormat(lang === "en" ? "en-SE" : "sv-SE", { style: "currency", currency: "SEK", maximumFractionDigits: 0 }).format(sek);
 }
 
-export function formatDate(iso: string) {
-  return new Intl.DateTimeFormat("sv-SE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+export function formatDate(iso: string, locale = "sv-SE") {
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 }
 
 export function slugify(input: string) {

@@ -6,10 +6,12 @@ import { useEffect, useRef, useState } from "react";
 import { logout } from "@/app/admin/actions";
 import Logo from "@/components/site/Logo";
 import AdminNav from "./AdminNav";
+import { AdminLangSwitch, useAdminT } from "./AdminI18n";
 
 /** Admin sidebar: fixed on desktop, a slide-in drawer behind a top bar on small screens. */
 export default function AdminChrome({ newCount, logo }: { newCount: number; logo: string }) {
   const [open, setOpen] = useState(false);
+  const { t } = useAdminT();
   const pathname = usePathname();
   const burger = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -41,18 +43,21 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
 
   const footer = (
     <div className="mt-auto space-y-1 border-t border-white/10 pt-4 text-[0.95rem]">
+      <div className="px-3.5 pb-2">
+        <AdminLangSwitch />
+      </div>
       <Link href="/" target="_blank" className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-mist hover:bg-white/6 hover:text-white">
         <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
         </svg>
-        Visa webbplatsen
+        {t.nav.viewSite}
       </Link>
       <form action={logout}>
         <button className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-mist hover:bg-white/6 hover:text-white">
           <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l4-4-4-4M14 12H4" />
           </svg>
-          Logga ut
+          {t.nav.logout}
         </button>
       </form>
     </div>
@@ -62,7 +67,7 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
     <>
       {/* small screens: top bar */}
       <div className="sticky top-0 z-40 flex h-16 items-center justify-between bg-granite px-4 text-snow md:hidden">
-        <Link href="/admin" aria-label="Till översikten" className="flex items-center">
+        <Link href="/admin" aria-label={t.nav.toOverview} className="flex items-center">
           {logoEl}
         </Link>
         <button
@@ -70,7 +75,7 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
           type="button"
           aria-expanded={open}
           aria-controls="admin-drawer"
-          aria-label="Öppna menyn"
+          aria-label={t.nav.openMenu}
           onClick={() => setOpen(true)}
           className="relative grid h-11 w-11 place-items-center rounded-full ring-1 ring-white/25 hover:bg-white/10"
         >
@@ -78,7 +83,7 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
             <span className="h-[2px] w-5 rounded-full bg-current" />
             <span className="h-[2px] w-3.5 rounded-full bg-current" />
           </span>
-          {newCount > 0 && <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-hallon ring-2 ring-granite" aria-label={`${newCount} nya förfrågningar`} />}
+          {newCount > 0 && <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-hallon ring-2 ring-granite" aria-label={t.nav.newInquiries(newCount)} />}
         </button>
       </div>
 
@@ -92,7 +97,7 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
         id="admin-drawer"
         role="dialog"
         aria-modal="true"
-        aria-label="Adminmeny"
+        aria-label={t.nav.menu}
         inert={!open}
         className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col bg-granite p-5 text-snow transition-[translate,box-shadow] duration-300 ease-[cubic-bezier(.2,.7,.2,1)] md:hidden ${
           open ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none"
@@ -103,7 +108,7 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
           <button
             ref={closeBtn}
             type="button"
-            aria-label="Stäng menyn"
+            aria-label={t.nav.closeMenu}
             onClick={() => {
               setOpen(false);
               burger.current?.focus();

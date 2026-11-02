@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAdminT } from "./AdminI18n";
 
 const icon = (d: React.ReactNode) => (
   <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -18,14 +19,15 @@ const ICONS = {
 
 export default function AdminNav({ newCount, onNavigate }: { newCount: number; onNavigate?: () => void }) {
   const path = usePathname();
+  const { t } = useAdminT();
   const items = [
-    { href: "/admin", label: "Översikt", exact: true, icon: ICONS.overview },
-    { href: "/admin/produkter", label: "Produkter", icon: ICONS.products },
-    { href: "/admin/forfragningar", label: "Förfrågningar", badge: newCount, icon: ICONS.inquiries },
-    { href: "/admin/innehall", label: "Sidinnehåll", icon: ICONS.content },
+    { href: "/admin", label: t.nav.overview, exact: true, icon: ICONS.overview },
+    { href: "/admin/produkter", label: t.nav.products, icon: ICONS.products },
+    { href: "/admin/forfragningar", label: t.nav.inquiries, badge: newCount, icon: ICONS.inquiries },
+    { href: "/admin/innehall", label: t.nav.content, icon: ICONS.content },
   ];
   return (
-    <nav className="flex flex-col gap-1" aria-label="Admin">
+    <nav className="flex flex-col gap-1" aria-label={t.nav.menu}>
       {items.map((it) => {
         const active = it.exact ? path === it.href : path.startsWith(it.href);
         return (
@@ -41,7 +43,7 @@ export default function AdminNav({ newCount, onNavigate }: { newCount: number; o
             {it.icon}
             <span className="flex-1">{it.label}</span>
             {it.badge ? (
-              <span className="rounded-full bg-hallon px-2 text-sm tabular-nums text-white" aria-label={`${it.badge} nya`}>
+              <span className="rounded-full bg-hallon px-2 text-sm tabular-nums text-white" aria-label={t.nav.newBadge(it.badge)}>
                 {it.badge}
               </span>
             ) : null}

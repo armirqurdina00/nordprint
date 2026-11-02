@@ -2,14 +2,15 @@ import Link from "next/link";
 import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
+import { getAdminT } from "@/lib/admin-lang";
 
 export default async function Dashboard() {
-  const { products, inquiries } = await getContent();
+  const [{ products, inquiries }, t] = await Promise.all([getContent(), getAdminT()]);
   const stats = [
-    { label: "Nya förfrågningar", value: inquiries.filter((i) => i.status === "ny").length, href: "/admin/forfragningar?status=ny" },
-    { label: "Pågående", value: inquiries.filter((i) => i.status === "pågår").length, href: "/admin/forfragningar?status=pågår" },
-    { label: "Publicerade produkter", value: products.filter((p) => p.published).length, href: "/admin/produkter" },
-    { label: "Utkast", value: products.filter((p) => !p.published).length, href: "/admin/produkter" },
+    { label: t.dashboard.statNew, value: inquiries.filter((i) => i.status === "ny").length, href: "/admin/forfragningar?status=ny" },
+    { label: t.dashboard.statOngoing, value: inquiries.filter((i) => i.status === "pågår").length, href: "/admin/forfragningar?status=pågår" },
+    { label: t.dashboard.statPublished, value: products.filter((p) => p.published).length, href: "/admin/produkter" },
+    { label: t.dashboard.statDrafts, value: products.filter((p) => !p.published).length, href: "/admin/produkter" },
   ];
   const latest = inquiries.slice(0, 5);
   const missingPhotos = products.filter((p) => p.published && p.images.length === 0);
@@ -17,8 +18,8 @@ export default async function Dashboard() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-sans text-3xl font-semibold tracking-normal">Översikt</h1>
-        <Link href="/admin/produkter/ny" className="btn btn-primary">Ny produkt</Link>
+        <h1 className="font-sans text-3xl font-semibold tracking-normal">{t.dashboard.title}</h1>
+        <Link href="/admin/produkter/ny" className="btn btn-primary">{t.dashboard.newProduct}</Link>
       </div>
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((s) => (
@@ -31,9 +32,9 @@ export default async function Dashboard() {
 
       {missingPhotos.length > 0 && (
         <div className="mt-6 rounded-2xl bg-hallon-soft p-5">
-          <p className="font-semibold">{missingPhotos.length} publicerade produkter saknar foto</p>
+          <p className="font-semibold">{t.dashboard.missingPhotos(missingPhotos.length)}</p>
           <p className="mt-1 text-fjord">
-            De visas med en färgplatta tills du laddar upp en bild:{" "}
+            {t.dashboard.missingPhotosText}{" "}
             {missingPhotos.map((p, i) => (
               <span key={p.id}>
                 <Link className="font-medium text-granite underline" href={`/admin/produkter/${p.id}`}>{p.sv.name}</Link>
@@ -46,12 +47,12 @@ export default async function Dashboard() {
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-sans text-xl font-semibold tracking-normal">Senaste förfrågningar</h2>
-          <Link href="/admin/forfragningar" className="font-medium underline underline-offset-4">Visa alla</Link>
+          <h2 className="font-sans text-xl font-semibold tracking-normal">{t.dashboard.latest}</h2>
+          <Link href="/admin/forfragningar" className="font-medium underline underline-offset-4">{t.dashboard.showAll}</Link>
         </div>
         {latest.length === 0 ? (
           <p className="mt-4 rounded-2xl bg-paper p-6 text-fjord ring-1 ring-mist">
-            Inga förfrågningar än. De dyker upp här när någon skickar beställningsformuläret.
+            {t.dashboard.empty}
           </p>
         ) : (
           <ul className="mt-4 divide-y divide-mist overflow-hidden rounded-2xl bg-paper ring-1 ring-mist">
@@ -62,8 +63,8 @@ export default async function Dashboard() {
                     <p className="font-semibold">{q.name}</p>
                     <p className="truncate text-fjord">{q.message}</p>
                   </div>
-                  <StatusPill status={q.status} />
-                  <p className="hidden text-sm text-fjord sm:block">{formatDate(q.createdAt)}</p>
+                  <StatusPill status={q.status} t={t} />
+                  <p className="hidden text-sm text-fjord sm:block">{formatDate(q.createdAt, t.locale)}</p>
                 </Link>
               </li>
             ))}

@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { checkPassword, createSession, destroySession, requireAdmin } from "@/lib/auth";
 import { mutate, newId } from "@/lib/db";
-import { collectUploads, deleteUpload } from "@/lib/uploads";
+import { collectUploads, deleteUpload, UploadError } from "@/lib/uploads";
+import { getAdminT } from "@/lib/admin-lang";
+import { uploadErrorMessage } from "@/lib/admin-i18n";
 import { slugify } from "@/lib/format";
 import type { FaqItem, InquiryStatus, Lang, Product, ProductText, SettingsText, TextItem } from "@/lib/types";
 
@@ -17,7 +19,7 @@ function refresh() {
 }
 
 export async function login(_prev: FormState, form: FormData): Promise<FormState> {
-  if (!checkPassword(str(form, "password"))) return { error: "Fel lösenord." };
+  if (!checkPassword(str(form, "password"))) return { error: (await getAdminT()).errors.wrongPassword };
   await createSession();
   redirect("/admin");
 }
@@ -45,22 +47,24 @@ function productText(form: FormData, lang: Lang): ProductText {
 
 export async function saveProduct(_prev: FormState, form: FormData): Promise<FormState> {
   await requireAdmin();
+  const t = await getAdminT();
   const id = str(form, "id");
   const sv = productText(form, "sv");
   const en = productText(form, "en");
-  if (!sv.name) return { error: "Produkten behöver ett svenskt namn." };
+  if (!sv.name) return { error: t.errors.nameRequired };
   const rawPrice = str(form, "price").replace(",", ".").replace(/\s/g, "");
   const price = rawPrice === "" ? null : Number(rawPrice);
-  if (price !== null && (!Number.isFinite(price) || price < 0)) return { error: "Skriv priset som ett tal, till exempel 249, eller lämna tomt för pris på förfrågan." };
+  if (price !== null && (!Number.isFinite(price) || price < 0)) return { error: t.errors.price };
   const slug = slugify(str(form, "slug") || sv.name);
-  if (!slug) return { error: "Adressen får bara innehålla bokstäver, siffror och bindestreck." };
+  if (!slug) return { error: t.errors.slug };
 
   let images: string[] = JSON.parse(str(form, "images") || "[]");
   const removed: string[] = JSON.parse(str(form, "removedImages") || "[]");
   try {
     images.push(...(await collectUploads(form, "newImages", "products")));
   } catch (e) {
-    return { error: (e as Error).message };
+    if (e instanceof UploadError) return { error: uploadErrorMessage(t, e) };
+    throw e;
   }
   images = images.filter((u) => !removed.includes(u));
 
@@ -93,7 +97,7 @@ export async function saveProduct(_prev: FormState, form: FormData): Promise<For
     d.products.push(created);
     return created.id;
   });
-  if (result === "dup") return { error: `Adressen "${slug}" används redan av en annan produkt.` };
+  if (result === "dup") return { error: t.errors.slugTaken(slug) };
   // product photos shipped with the site live in /public and are never deleted
   await Promise.all(removed.map(deleteUpload));
   refresh();
@@ -147,7 +151,7 @@ export async function updateInquiry(_prev: FormState, form: FormData): Promise<F
   await requireAdmin();
   const id = str(form, "id");
   const status = str(form, "status") as InquiryStatus;
-  if (!STATUSES.includes(status)) return { error: "Okänd status." };
+  if (!STATUSES.includes(status)) return { error: (await getAdminT()).errors.unknownStatus };
   await mutate((d) => {
     const q = d.inquiries.find((x) => x.id === id);
     if (q) {
@@ -196,14 +200,16 @@ function settingsText(form: FormData, lang: Lang): SettingsText {
 
 export async function saveSettings(_prev: FormState, form: FormData): Promise<FormState> {
   await requireAdmin();
+  const t = await getAdminT();
   const brandName = str(form, "brandName");
-  if (!brandName) return { error: "Företagsnamnet får inte vara tomt." };
+  if (!brandName) return { error: t.errors.brandRequired };
 
   let newLogo: string | null = null;
   try {
     newLogo = (await collectUploads(form, "logoFile", "site", 1))[0] ?? null;
   } catch (e) {
-    return { error: (e as Error).message };
+    if (e instanceof UploadError) return { error: uploadErrorMessage(t, e) };
+    throw e;
   }
   const removeLogo = form.get("removeLogo") === "on";
 

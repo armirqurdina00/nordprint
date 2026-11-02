@@ -20,7 +20,7 @@ export default function Header({ lang, announcement, logo }: { lang: Lang; annou
       {announcement && <p className="bg-granite px-4 py-2 text-center text-sm text-snow">{announcement}</p>}
       <div className="border-b border-mist/80 bg-snow/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-          <Link href={home} aria-label={d.homeLabel} className="text-granite">
+          <Link href={home} aria-label={d.homeLabel} className="flex shrink-0 items-center text-granite">
             <Logo src={logo} />
           </Link>
           <nav className="hidden items-center gap-6 md:flex" aria-label={d.nav.main}>

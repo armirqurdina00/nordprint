@@ -5,9 +5,10 @@ import { submitInquiry, type InquiryState } from "@/app/actions/public";
 import { moveFilesToBlob } from "@/lib/upload-client";
 import { MAX_INQUIRY_FILES, UploadError } from "@/lib/upload-rules";
 import { t } from "@/lib/i18n";
+import Select from "@/components/ui/Select";
 import type { Lang } from "@/lib/types";
 
-type Option = { slug: string; name: string; colors: string[] };
+type Option = { slug: string; name: string; colors: string[]; image?: string; category?: string };
 
 export default function OrderForm({
   lang,
@@ -68,12 +69,25 @@ export default function OrderForm({
       <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
         <div>
           <label className="label" htmlFor="productSlug">{d.about}</label>
-          <select className="field" id="productSlug" name="productSlug" value={slug} onChange={(e) => setSlug(e.target.value)}>
-            <option value="">{d.customIdea}</option>
-            {products.map((p) => (
-              <option key={p.slug} value={p.slug}>{p.name}</option>
-            ))}
-          </select>
+          <Select
+            id="productSlug"
+            name="productSlug"
+            value={slug}
+            onChange={setSlug}
+            options={[
+              {
+                value: "",
+                label: d.customIdea,
+                hint: d.customIdeaHint,
+                icon: (
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" />
+                  </svg>
+                ),
+              },
+              ...products.map((p) => ({ value: p.slug, label: p.name, hint: p.category, image: p.image, swatches: p.colors })),
+            ]}
+          />
         </div>
         <div>
           <label className="label" htmlFor="quantity">{d.quantity}</label>

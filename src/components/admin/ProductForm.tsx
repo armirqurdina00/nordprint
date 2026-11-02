@@ -7,6 +7,7 @@ import { saveProduct, type FormState } from "@/app/admin/actions";
 import { moveFilesToBlob } from "@/lib/upload-client";
 import { FormFeedback, ImageManager, SubmitButton } from "./ui";
 import LangTabs from "./LangTabs";
+import Combobox from "@/components/ui/Combobox";
 import { slugify } from "@/lib/format";
 
 const EMPTY: ProductText = { name: "", tagline: "", description: "", priceNote: "", category: "", material: "", dimensions: "", leadTime: "" };
@@ -57,8 +58,7 @@ export default function ProductForm({ product, categories, direct = false }: { p
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="label" htmlFor={`${l}_category`}>Kategori</label>
-                    <input className="field" id={`${l}_category`} name={`${l}_category`} defaultValue={text(l).category} list={`${l}_categories`} />
-                    <datalist id={`${l}_categories`}>{categories[l].map((c) => <option key={c} value={c} />)}</datalist>
+                    <Combobox id={`${l}_category`} name={`${l}_category`} defaultValue={text(l).category} suggestions={categories[l]} />
                   </div>
                   <div>
                     <label className="label" htmlFor={`${l}_priceNote`}>Pristillägg</label>
@@ -66,7 +66,7 @@ export default function ProductForm({ product, categories, direct = false }: { p
                   </div>
                   <div>
                     <label className="label" htmlFor={`${l}_material`}>Material</label>
-                    <input className="field" id={`${l}_material`} name={`${l}_material`} defaultValue={text(l).material} list="materials" />
+                    <Combobox id={`${l}_material`} name={`${l}_material`} defaultValue={text(l).material} suggestions={["PLA", "PETG", "TPU", "ABS"]} />
                   </div>
                   <div>
                     <label className="label" htmlFor={`${l}_dimensions`}>Mått</label>
@@ -80,7 +80,6 @@ export default function ProductForm({ product, categories, direct = false }: { p
               </>
             )}
           </LangTabs>
-          <datalist id="materials"><option value="PLA" /><option value="PETG" /><option value="TPU" /><option value="ABS" /></datalist>
         </section>
         <section className="rounded-2xl bg-paper p-6 ring-1 ring-mist">
           <h2 className="label text-base">Bilder</h2>

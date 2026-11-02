@@ -48,7 +48,7 @@ export default async function Order({ params, searchParams }: Props) {
       <OrderForm
         lang={lang}
         direct={directUploads}
-        products={products.map((p) => ({ slug: p.slug, name: p.name, colors: p.colors }))}
+        products={products.map((p) => ({ slug: p.slug, name: p.name, colors: p.colors, image: p.images[0], category: p.category }))}
         initialSlug={products.some((p) => p.slug === wanted) ? wanted : ""}
       />
     </div>

@@ -58,6 +58,7 @@ export async function POST(request: Request) {
     });
     return Response.json(result);
   } catch (e) {
+    console.error("[upload] token request refused or failed:", (e as Error).message);
     return Response.json({ error: (e as Error).message }, { status: 400 });
   }
 }

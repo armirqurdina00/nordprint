@@ -52,7 +52,10 @@ export async function collectUploads(form: FormData, field: string, kind: Upload
     } catch {
       urls = [];
     }
-    return (Array.isArray(urls) ? urls : []).filter((u): u is string => typeof u === "string" && isBlobUrl(u, kind)).slice(0, max);
+    const list = Array.isArray(urls) ? urls : [];
+    const valid = list.filter((u): u is string => typeof u === "string" && isBlobUrl(u, kind)).slice(0, max);
+    if (valid.length !== list.length) console.warn(`[uploads] ignored ${list.length - valid.length} invalid ${kind} URL(s):`, list);
+    return valid;
   }
   const out: string[] = [];
   for (const f of form.getAll(field).slice(0, max)) {

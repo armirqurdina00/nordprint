@@ -7,6 +7,7 @@ import type { BlobMode } from "@/lib/upload-rules";
 import { MAX_INQUIRY_FILES, UploadError } from "@/lib/upload-rules";
 import { t } from "@/lib/i18n";
 import Select from "@/components/ui/Select";
+import FilePicker, { FileTiles, usePreviews } from "./FilePicker";
 import type { Lang } from "@/lib/types";
 
 type Option = { slug: string; name: string; colors: string[]; image?: string; category?: string };
@@ -23,11 +24,19 @@ export default function OrderForm({
   initialSlug?: string;
 }) {
   const d = t(lang).order;
+  // the selected files live in state, so they survive a failed send instead of being cleared with the form
+  const [files, setFiles] = useState<File[]>([]);
+  const filesRef = useRef<File[]>([]);
+  filesRef.current = files;
+  const previews = usePreviews(files);
   const [state, action, pending] = useActionState<InquiryState, FormData>(async (prev, form) => {
+    form.delete("files");
+    for (const file of filesRef.current) form.append("files", file);
     if (direct) {
       try {
         await moveFilesToBlob(form, "files", "inquiries", direct, MAX_INQUIRY_FILES);
       } catch (e) {
+        console.error("[order] file upload failed", e);
         const err = e as UploadError;
         const fields = Object.fromEntries([...form.entries()].filter(([, v]) => typeof v === "string")) as Record<string, string>;
         const error = err.kind === "type" ? d.errFileType(err.detail) : err.kind === "size" ? d.errFileSize(err.detail, err.mb) : d.errUpload(err.detail);
@@ -37,7 +46,6 @@ export default function OrderForm({
     return submitInquiry(prev, form);
   }, { ok: false });
   const [slug, setSlug] = useState(initialSlug);
-  const [fileNames, setFileNames] = useState<string[]>([]);
   const selected = products.find((p) => p.slug === slug);
   const f = state.fields ?? {};
   const done = useRef<HTMLDivElement>(null);
@@ -50,6 +58,12 @@ export default function OrderForm({
       <div ref={done} className="rounded-[22px] bg-paper p-8 ring-1 ring-mist" role="status">
         <h2 className="text-2xl font-semibold">{d.thanksTitle}</h2>
         <p className="mt-3 max-w-prose text-fjord">{d.thanksText}</p>
+        {files.length > 0 && (
+          <div className="mt-6">
+            <p className="label">{d.attached(files.length)}</p>
+            <FileTiles files={files} previews={previews} />
+          </div>
+        )}
       </div>
     );
   }
@@ -130,19 +144,7 @@ export default function OrderForm({
       </div>
       <div>
         <span className="label">{d.files} <span className="font-normal text-fjord">{d.optional}</span></span>
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist px-4 py-6 text-center hover:border-hallon">
-          <span className="font-medium">{d.chooseFiles}</span>
-          <span className="hint">{d.filesHint}</span>
-          <input
-            type="file"
-            name="files"
-            multiple
-            accept=".jpg,.jpeg,.png,.webp,.stl,.3mf,.obj,.step,.stp,.pdf"
-            className="sr-only"
-            onChange={(e) => setFileNames(Array.from(e.target.files ?? []).map((x) => x.name))}
-          />
-        </label>
-        {fileNames.length > 0 && <p className="hint mt-2">{fileNames.join(", ")}</p>}
+        <FilePicker lang={lang} files={files} onChange={setFiles} />
       </div>
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       {state.error && (

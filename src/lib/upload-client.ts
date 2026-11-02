@@ -26,8 +26,10 @@ export async function moveFilesToBlob(form: FormData, field: string, kind: Uploa
           mode === "oidc"
             ? await uploadPresigned(presignedPathname(kind, file.name, crypto.randomUUID().replace(/-/g, "")), file, options)
             : await upload(`${kind}/${baseName(file.name)}${ext}`, file, options);
+        if (!res?.url) throw new Error("Upload finished without a file URL");
         return res.url;
-      } catch {
+      } catch (e) {
+        console.error(`[upload] ${file.name} failed:`, e);
         throw new UploadError("failed", file.name);
       }
     })

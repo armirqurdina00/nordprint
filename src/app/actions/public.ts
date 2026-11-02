@@ -36,6 +36,7 @@ export async function submitInquiry(_prev: InquiryState, form: FormData): Promis
   try {
     saved = await collectUploads(form, "files", "inquiries", MAX_INQUIRY_FILES);
   } catch (e) {
+    console.error("[order] attachments could not be saved:", e);
     if (e instanceof UploadError) {
       return { ok: false, error: e.kind === "type" ? d.errFileType(e.detail) : e.kind === "size" ? d.errFileSize(e.detail, e.mb) : d.errUpload(e.detail), fields };
     }

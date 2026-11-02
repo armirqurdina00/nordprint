@@ -16,7 +16,9 @@ export type SelectOption = {
 
 /** Leading visual of an option: photo, icon or dot. */
 function Leading({ o, size = "md" }: { o: SelectOption; size?: "sm" | "md" }) {
-  const box = size === "md" ? "h-10 w-10 rounded-xl" : "h-8 w-8 rounded-lg";
+  // "sm" is used inside the closed select and must not be taller than one line of text (1.6rem),
+  // so the select keeps exactly the same height as a normal input
+  const box = size === "md" ? "h-10 w-10 rounded-xl [&>svg]:h-5 [&>svg]:w-5" : "-my-0.5 h-6 w-6 rounded-md [&>svg]:h-4 [&>svg]:w-4";
   if (o.image) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={o.image} alt="" className={`${box} shrink-0 object-cover ring-1 ring-black/5`} />;
@@ -162,7 +164,7 @@ export default function Select({
         aria-activedescendant={open ? `${baseId}-opt-${active}` : undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={onKeyDown}
-        className={`field flex min-h-[3rem] items-center gap-3 text-left ${open ? "border-hallon shadow-[0_0_0_3px_var(--color-hallon-soft)]" : ""}`}
+        className={`field flex items-center gap-2.5 text-left ${open ? "border-hallon shadow-[0_0_0_3px_var(--color-hallon-soft)]" : ""}`}
       >
         {selected ? (
           <>

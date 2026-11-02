@@ -4,7 +4,7 @@ import { isLang, t } from "@/lib/i18n";
 import { localProduct, settingsText } from "@/lib/localize";
 import { PRODUCT_PARAM } from "@/lib/routes";
 import OrderForm from "@/components/site/OrderForm";
-import { directUploads } from "@/lib/uploads";
+import { blobMode } from "@/lib/uploads";
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<Record<string, string | undefined>> };
 
@@ -47,7 +47,7 @@ export default async function Order({ params, searchParams }: Props) {
       </div>
       <OrderForm
         lang={lang}
-        direct={directUploads}
+        direct={blobMode}
         products={products.map((p) => ({ slug: p.slug, name: p.name, colors: p.colors, image: p.images[0], category: p.category }))}
         initialSlug={products.some((p) => p.slug === wanted) ? wanted : ""}
       />

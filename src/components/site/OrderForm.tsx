@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { submitInquiry, type InquiryState } from "@/app/actions/public";
 import { moveFilesToBlob } from "@/lib/upload-client";
+import type { BlobMode } from "@/lib/upload-rules";
 import { MAX_INQUIRY_FILES, UploadError } from "@/lib/upload-rules";
 import { t } from "@/lib/i18n";
 import Select from "@/components/ui/Select";
@@ -14,10 +15,10 @@ export default function OrderForm({
   lang,
   products,
   initialSlug = "",
-  direct = false,
+  direct = null,
 }: {
   lang: Lang;
-  direct?: boolean;
+  direct?: BlobMode;
   products: Option[];
   initialSlug?: string;
 }) {
@@ -25,7 +26,7 @@ export default function OrderForm({
   const [state, action, pending] = useActionState<InquiryState, FormData>(async (prev, form) => {
     if (direct) {
       try {
-        await moveFilesToBlob(form, "files", "inquiries", MAX_INQUIRY_FILES);
+        await moveFilesToBlob(form, "files", "inquiries", direct, MAX_INQUIRY_FILES);
       } catch (e) {
         const err = e as UploadError;
         const fields = Object.fromEntries([...form.entries()].filter(([, v]) => typeof v === "string")) as Record<string, string>;

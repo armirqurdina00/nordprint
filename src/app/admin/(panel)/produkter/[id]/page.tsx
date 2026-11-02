@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContent } from "@/lib/db";
 import ProductForm from "@/components/admin/ProductForm";
-import { directUploads } from "@/lib/uploads";
+import { blobMode } from "@/lib/uploads";
 import { ConfirmButton } from "@/components/admin/ui";
 import { deleteProduct } from "../../../actions";
 
@@ -27,7 +27,7 @@ export default async function EditProduct({ params, searchParams }: { params: Pr
         )}
       </div>
       {skapad && <p role="status" className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 font-medium text-emerald-900">Produkten är skapad.</p>}
-      <ProductForm product={product} categories={categories} direct={directUploads} />
+      <ProductForm product={product} categories={categories} direct={blobMode} />
     </>
   );
 }

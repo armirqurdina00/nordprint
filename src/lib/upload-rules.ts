@@ -2,6 +2,14 @@
 
 export type UploadKind = "products" | "inquiries" | "site";
 
+/**
+ * How the browser uploads to Vercel Blob:
+ * - "token": classic stores with BLOB_READ_WRITE_TOKEN (client tokens via handleUpload)
+ * - "oidc": stores connected with OIDC (BLOB_STORE_ID), which use presigned URLs instead
+ * - null: no Blob, files are posted with the form (local development)
+ */
+export type BlobMode = "token" | "oidc" | null;
+
 const IMAGE: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
@@ -76,4 +84,13 @@ export function isBlobUrl(url: string, kind?: UploadKind) {
   } catch {
     return false;
   }
+}
+
+/** Pathname for a presigned upload: the random part is added here, since presigned tokens are scoped to an exact path. */
+export function presignedPathname(kind: UploadKind, name: string, random: string) {
+  return `${kind}/${baseName(name)}-${random}${extOf(name)}`;
+}
+
+export function isPresignedPathname(pathname: string, kind: UploadKind) {
+  return new RegExp(`^${kind}/[\\w-]{1,40}-[a-f0-9]{32}\\.[a-z0-9]+$`).test(pathname);
 }

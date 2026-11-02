@@ -2,17 +2,18 @@ import "server-only";
 import { promises as fs } from "fs";
 import path from "path";
 import { del } from "@vercel/blob";
-import { baseName, checkFile, isBlobUrl, UploadError, type UploadKind } from "./upload-rules";
+import { baseName, checkFile, isBlobUrl, UploadError, type BlobMode, type UploadKind } from "./upload-rules";
 
 export { UploadError };
 
 /**
  * Two modes:
- * - Vercel (BLOB_READ_WRITE_TOKEN set): the browser uploads straight to Vercel Blob via /api/upload,
+ * - Vercel (BLOB_READ_WRITE_TOKEN or OIDC-connected BLOB_STORE_ID): the browser uploads straight to Vercel Blob via /api/upload,
  *   and server actions only receive the resulting URLs. This avoids Vercel's 4.5 MB request limit.
  * - Local: files are posted with the form and written to data/uploads, served by /uploads/[...path].
  */
-export const directUploads = !!process.env.BLOB_READ_WRITE_TOKEN;
+export const blobMode: BlobMode = process.env.BLOB_READ_WRITE_TOKEN ? "token" : process.env.BLOB_STORE_ID ? "oidc" : null;
+export const directUploads = blobMode !== null;
 
 /** Deployed on Vercel without Blob: the disk is read-only, so files cannot be stored anywhere. */
 export const uploadsUnavailable = !directUploads && !!process.env.VERCEL;

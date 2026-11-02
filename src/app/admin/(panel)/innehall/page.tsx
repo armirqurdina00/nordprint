@@ -1,6 +1,6 @@
 import { getSettings } from "@/lib/db";
 import SettingsForm from "@/components/admin/SettingsForm";
-import { directUploads } from "@/lib/uploads";
+import { blobMode } from "@/lib/uploads";
 
 export default async function ContentPage() {
   const settings = await getSettings();
@@ -8,7 +8,7 @@ export default async function ContentPage() {
     <>
       <h1 className="font-sans text-3xl font-semibold tracking-normal">Sidinnehåll</h1>
       <p className="mb-8 mt-1 text-fjord">Texterna på webbplatsen. Ändringarna syns direkt när du sparar.</p>
-      <SettingsForm settings={settings} direct={directUploads} />
+      <SettingsForm settings={settings} direct={blobMode} />
     </>
   );
 }

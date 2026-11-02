@@ -54,7 +54,7 @@ På Vercel laddar webbläsaren upp filer direkt till Vercel Blob (via `/api/uplo
    - `SESSION_SECRET`: en lång slumpmässig sträng, till exempel från `openssl rand -hex 32`
 3. **Koppla lagring** under Storage:
    - **Upstash for Redis** (Marketplace). Sätter `KV_REST_API_URL` och `KV_REST_API_TOKEN`.
-   - **Blob** (publik). Sätter `BLOB_READ_WRITE_TOKEN`.
+   - **Blob** (publik). Sätter `BLOB_STORE_ID` (OIDC, Vercels standard) eller `BLOB_READ_WRITE_TOKEN`. Båda fungerar.
 4. **Gör en ny deploy** så att variablerna kommer med (Deployments → Redeploy).
 
 Utan Redis visas webbplatsen med startinnehållet, men inget kan sparas, och adminpanelen visar en varning om det.

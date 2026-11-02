@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Lang, Product, ProductText } from "@/lib/types";
 import { saveProduct, type FormState } from "@/app/admin/actions";
 import { moveFilesToBlob } from "@/lib/upload-client";
+import type { BlobMode } from "@/lib/upload-rules";
 import { FormFeedback, ImageManager, SubmitButton } from "./ui";
 import LangTabs from "./LangTabs";
 import Combobox from "@/components/ui/Combobox";
@@ -12,11 +13,11 @@ import { slugify } from "@/lib/format";
 
 const EMPTY: ProductText = { name: "", tagline: "", description: "", priceNote: "", category: "", material: "", dimensions: "", leadTime: "" };
 
-export default function ProductForm({ product, categories, direct = false }: { product?: Product; categories: Record<Lang, string[]>; direct?: boolean }) {
+export default function ProductForm({ product, categories, direct = null }: { product?: Product; categories: Record<Lang, string[]>; direct?: BlobMode }) {
   const [state, action] = useActionState<FormState, FormData>(async (prev, form) => {
     if (direct) {
       try {
-        await moveFilesToBlob(form, "newImages", "products");
+        await moveFilesToBlob(form, "newImages", "products", direct);
       } catch (e) {
         return { error: (e as Error).message };
       }

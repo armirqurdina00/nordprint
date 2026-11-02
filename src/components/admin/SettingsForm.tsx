@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import type { Lang, Settings, SettingsText } from "@/lib/types";
 import { saveSettings, type FormState } from "@/app/admin/actions";
 import { moveFilesToBlob } from "@/lib/upload-client";
+import type { BlobMode } from "@/lib/upload-rules";
 import { FormFeedback, ListEditor, SubmitButton } from "./ui";
 import LangTabs from "./LangTabs";
 import Logo from "@/components/site/Logo";
@@ -34,11 +35,11 @@ function Input({ name, label, value, multiline, hint, placeholder }: { name: str
   );
 }
 
-export default function SettingsForm({ settings: s, direct = false }: { settings: Settings; direct?: boolean }) {
+export default function SettingsForm({ settings: s, direct = null }: { settings: Settings; direct?: BlobMode }) {
   const [state, action] = useActionState<FormState, FormData>(async (prev, form) => {
     if (direct) {
       try {
-        await moveFilesToBlob(form, "logoFile", "site");
+        await moveFilesToBlob(form, "logoFile", "site", direct);
       } catch (e) {
         return { error: (e as Error).message };
       }

@@ -1,0 +1,18 @@
+import { Unbounded, Instrument_Sans, Montserrat } from "next/font/google";
+import { headers } from "next/headers";
+import "./globals.css";
+
+const unbounded = Unbounded({ subsets: ["latin"], variable: "--font-unbounded", weight: ["400", "500", "600", "700"] });
+const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument" });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", weight: ["500"] });
+
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = (await headers()).get("x-lang") === "en" ? "en" : "sv";
+  return (
+    <html lang={lang} className={`${unbounded.variable} ${instrument.variable} ${montserrat.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}

@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-snow: #eef2f3;
+  --color-paper: #ffffff;
+  --color-granite: #1e2b30;
+  --color-fjord: #4f6873;
+  --color-mist: #d3dcdf;
+  --color-hallon: #d8285a;
+  --color-hallon-dark: #b51d48;
+  --color-hallon-soft: #fbe3ea;
+
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-logo: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-snow);
+    color: var(--color-granite);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--color-hallon);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection { background: var(--color-hallon); color: white; }
+}
+
+/* Visible print layers: a hairline every 4px, used where the "printed" metaphor belongs. */
+.print-layers {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    color-mix(in srgb, var(--color-granite) 7%, transparent) 3px 4px
+  );
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.8rem 1.4rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 150ms, color 150ms, transform 150ms;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--color-hallon); color: white; }
+.btn-primary:hover { background: var(--color-hallon-dark); }
+.btn-ghost { box-shadow: inset 0 0 0 1.5px var(--color-granite); }
+.btn-ghost:hover { background: var(--color-granite); color: var(--color-snow); }
+.btn:disabled { opacity: 0.55; pointer-events: none; }
+
+.field {
+  width: 100%;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-mist);
+  background: white;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  transition: border-color 150ms;
+}
+.field:hover { border-color: color-mix(in srgb, var(--color-fjord) 50%, var(--color-mist)); }
+.field:focus { outline: none; border-color: var(--color-hallon); box-shadow: 0 0 0 3px var(--color-hallon-soft); }
+.label { display: block; font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.35rem; }
+.hint { font-size: 0.875rem; color: var(--color-fjord); }
+
+.prose-np p + p { margin-top: 1em; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

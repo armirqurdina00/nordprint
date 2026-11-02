@@ -1,0 +1,142 @@
+"use client";
+
+import { useActionState, useEffect, useRef, useState } from "react";
+import { submitInquiry, type InquiryState } from "@/app/actions/public";
+import { moveFilesToBlob } from "@/lib/upload-client";
+import { MAX_INQUIRY_FILES, UploadError } from "@/lib/upload-rules";
+import { t } from "@/lib/i18n";
+import type { Lang } from "@/lib/types";
+
+type Option = { slug: string; name: string; colors: string[] };
+
+export default function OrderForm({
+  lang,
+  products,
+  initialSlug = "",
+  direct = false,
+}: {
+  lang: Lang;
+  direct?: boolean;
+  products: Option[];
+  initialSlug?: string;
+}) {
+  const d = t(lang).order;
+  const [state, action, pending] = useActionState<InquiryState, FormData>(async (prev, form) => {
+    if (direct) {
+      try {
+        await moveFilesToBlob(form, "files", "inquiries", MAX_INQUIRY_FILES);
+      } catch (e) {
+        const err = e as UploadError;
+        const fields = Object.fromEntries([...form.entries()].filter(([, v]) => typeof v === "string")) as Record<string, string>;
+        const error = err.kind === "type" ? d.errFileType(err.detail) : err.kind === "size" ? d.errFileSize(err.detail, err.mb) : d.errUpload(err.detail);
+        return { ok: false, error, fields };
+      }
+    }
+    return submitInquiry(prev, form);
+  }, { ok: false });
+  const [slug, setSlug] = useState(initialSlug);
+  const [fileNames, setFileNames] = useState<string[]>([]);
+  const selected = products.find((p) => p.slug === slug);
+  const f = state.fields ?? {};
+  const done = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (state.ok) done.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [state.ok]);
+
+  if (state.ok) {
+    return (
+      <div ref={done} className="rounded-[22px] bg-paper p-8 ring-1 ring-mist" role="status">
+        <h2 className="text-2xl font-semibold">{d.thanksTitle}</h2>
+        <p className="mt-3 max-w-prose text-fjord">{d.thanksText}</p>
+      </div>
+    );
+  }
+
+  return (
+    <form action={action} className="grid gap-5 rounded-[22px] bg-paper p-6 ring-1 ring-mist sm:p-8" noValidate>
+      <input type="hidden" name="lang" value={lang} />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label className="label" htmlFor="name">{d.name}</label>
+          <input className="field" id="name" name="name" autoComplete="name" required defaultValue={f.name} />
+        </div>
+        <div>
+          <label className="label" htmlFor="email">{d.email}</label>
+          <input className="field" id="email" name="email" type="email" autoComplete="email" required defaultValue={f.email} />
+        </div>
+      </div>
+      <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
+        <div>
+          <label className="label" htmlFor="productSlug">{d.about}</label>
+          <select className="field" id="productSlug" name="productSlug" value={slug} onChange={(e) => setSlug(e.target.value)}>
+            <option value="">{d.customIdea}</option>
+            {products.map((p) => (
+              <option key={p.slug} value={p.slug}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label" htmlFor="quantity">{d.quantity}</label>
+          <input className="field" id="quantity" name="quantity" inputMode="numeric" defaultValue={f.quantity ?? "1"} />
+        </div>
+      </div>
+      {selected && selected.colors.length > 0 && (
+        <fieldset>
+          <legend className="label">{d.color}</legend>
+          <div className="flex flex-wrap gap-2">
+            {selected.colors.map((c, i) => (
+              <label key={c} className="cursor-pointer">
+                <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
+                <span
+                  className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
+                  style={{ background: c }}
+                  title={c}
+                />
+                <span className="sr-only">{c}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+      <div>
+        <label className="label" htmlFor="message">{d.message}</label>
+        <textarea
+          className="field min-h-36"
+          id="message"
+          name="message"
+          required
+          defaultValue={f.message}
+          placeholder={selected ? d.placeholderProduct : d.placeholderCustom}
+        />
+      </div>
+      <div>
+        <label className="label" htmlFor="phone">{d.phone} <span className="font-normal text-fjord">{d.optional}</span></label>
+        <input className="field" id="phone" name="phone" type="tel" autoComplete="tel" defaultValue={f.phone} />
+      </div>
+      <div>
+        <span className="label">{d.files} <span className="font-normal text-fjord">{d.optional}</span></span>
+        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-mist px-4 py-6 text-center hover:border-hallon">
+          <span className="font-medium">{d.chooseFiles}</span>
+          <span className="hint">{d.filesHint}</span>
+          <input
+            type="file"
+            name="files"
+            multiple
+            accept=".jpg,.jpeg,.png,.webp,.stl,.3mf,.obj,.step,.stp,.pdf"
+            className="sr-only"
+            onChange={(e) => setFileNames(Array.from(e.target.files ?? []).map((x) => x.name))}
+          />
+        </label>
+        {fileNames.length > 0 && <p className="hint mt-2">{fileNames.join(", ")}</p>}
+      </div>
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+      {state.error && (
+        <p className="rounded-xl bg-hallon-soft px-4 py-3 font-medium text-hallon-dark" role="alert">{state.error}</p>
+      )}
+      <div className="flex flex-wrap items-center gap-4">
+        <button className="btn btn-primary" disabled={pending}>{pending ? d.sending : d.send}</button>
+        <p className="hint">{d.noCommitment}</p>
+      </div>
+    </form>
+  );
+}

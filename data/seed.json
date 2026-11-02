@@ -1,0 +1,405 @@
+{
+  "settings": {
+    "brandName": "NordPrint Studio",
+    "logo": "",
+    "instagram": "https://www.instagram.com/nordprint.3s/",
+    "email": "",
+    "location": "Kungälv",
+    "orgNumber": "",
+    "sv": {
+      "announcement": "",
+      "heroTitle": "Innovativa idéer. Unika produkter.",
+      "heroText": "Vi skapar moderna och unika produkter med 3D-design och 3D-printing, från stilren inredning till personliga beställningar. Allt tillverkas med omsorg i Kungälv.",
+      "aboutTitle": "Tillverkat på beställning, med omsorg",
+      "aboutText": "NordPrint Studio är en liten designstudio i Kungälv. Alla produkter tillverkas på beställning, så vi kan anpassa färg och detaljer efter dig. Har du en egen idé? Skicka ett meddelande, så hjälper vi dig att göra den verklig.",
+      "services": [
+        {
+          "title": "Produkter ur sortimentet",
+          "text": "Inredning, köksprylar och säsongsfavoriter. Välj färg, så tillverkar vi din."
+        },
+        {
+          "title": "Egen design",
+          "text": "Har du en idé men ingen ritning? Skicka en skiss eller ett foto, så designar vi den åt dig."
+        },
+        {
+          "title": "Print från din fil",
+          "text": "Har du redan en 3D-fil printar vi den i den färg du vill ha."
+        },
+        {
+          "title": "Personliga beställningar",
+          "text": "Namn, detaljer eller en helt egen variant av något i sortimentet."
+        }
+      ],
+      "steps": [
+        {
+          "title": "Berätta vad du vill ha",
+          "text": "Välj en produkt eller beskriv din idé. Bifoga gärna bilder, mått eller filer."
+        },
+        {
+          "title": "Få pris och leveranstid",
+          "text": "Produktionstiden varierar beroende på design och antal, så du får alltid ett eget förslag."
+        },
+        {
+          "title": "Godkänn och betala",
+          "text": "Personliga önskemål godkänns innan produktion, och betalning sker innan produktionen startar."
+        },
+        {
+          "title": "Vi printar och levererar",
+          "text": "Din beställning tillverkas och efterbehandlas med omsorg innan den lämnar verkstaden."
+        }
+      ],
+      "faq": [
+        {
+          "q": "Hur lång tid tar en beställning?",
+          "a": "Produktionstiden varierar beroende på design och antal. Du får en tidsuppskattning tillsammans med priset."
+        },
+        {
+          "q": "När betalar jag?",
+          "a": "Betalning sker innan produktionen startar."
+        },
+        {
+          "q": "Kan jag välja färg?",
+          "a": "Ja, de flesta produkter finns i flera färger. Nyanser kan variera något från bilden beroende på material och skärm."
+        },
+        {
+          "q": "Varför syns små linjer på produkten?",
+          "a": "Små linjer och små variationer är en naturlig del av 3D-printing. Det är så man ser att produkten är byggd lager för lager."
+        },
+        {
+          "q": "Kan jag beställa något helt eget?",
+          "a": "Ja. Skicka en beskrivning, skiss eller fil. Personliga önskemål behöver godkännas innan produktion."
+        }
+      ],
+      "policies": [
+        {
+          "title": "Beställningar",
+          "text": "Alla produkter tillverkas på beställning."
+        },
+        {
+          "title": "Leveranstid",
+          "text": "Produktionstiden varierar beroende på design och antal."
+        },
+        {
+          "title": "Betalning",
+          "text": "Betalning sker innan produktionen startar."
+        },
+        {
+          "title": "Specialdesign",
+          "text": "Personliga önskemål behöver godkännas innan produktion."
+        },
+        {
+          "title": "Personliga produkter",
+          "text": "Personliga produkter kan inte returneras eller bytas när produktionen har startat, om inte produkten är defekt."
+        },
+        {
+          "title": "3D-printade produkter",
+          "text": "Små linjer och små variationer är en naturlig del av processen."
+        },
+        {
+          "title": "Färg och material",
+          "text": "Nyanser kan variera något från bilden beroende på material och skärm."
+        },
+        {
+          "title": "Problem med din beställning?",
+          "text": "Kontakta oss så snart som möjligt, gärna med en bild."
+        }
+      ]
+    },
+    "en": {
+      "announcement": "",
+      "heroTitle": "Innovative ideas. Unique products.",
+      "heroText": "We create modern, unique products with 3D design and 3D printing, from clean-lined home decor to personal orders. Everything is made with care in Kungälv, Sweden.",
+      "aboutTitle": "Made to order, with care",
+      "aboutText": "NordPrint Studio is a small design studio in Kungälv, Sweden. Every product is made to order, so we can adapt colours and details to you. Have an idea of your own? Send us a message and we'll help you make it real.",
+      "services": [
+        {
+          "title": "Products from the range",
+          "text": "Home decor, kitchen items and seasonal favourites. Pick a colour and we'll make yours."
+        },
+        {
+          "title": "Custom design",
+          "text": "Have an idea but no drawing? Send a sketch or a photo and we'll design it for you."
+        },
+        {
+          "title": "Printing from your file",
+          "text": "Already have a 3D file? We'll print it in the colour you want."
+        },
+        {
+          "title": "Personal orders",
+          "text": "Names, details or your own version of something from the range."
+        }
+      ],
+      "steps": [
+        {
+          "title": "Tell us what you want",
+          "text": "Pick a product or describe your idea. Images, measurements or files are welcome."
+        },
+        {
+          "title": "Get a price and lead time",
+          "text": "Production time depends on design and quantity, so you always get your own quote."
+        },
+        {
+          "title": "Approve and pay",
+          "text": "Personal requests are approved before production, and payment is made before production starts."
+        },
+        {
+          "title": "We print and deliver",
+          "text": "Your order is made and finished with care before it leaves the workshop."
+        }
+      ],
+      "faq": [
+        {
+          "q": "How long does an order take?",
+          "a": "Production time varies depending on design and quantity. You'll get an estimate together with the price."
+        },
+        {
+          "q": "When do I pay?",
+          "a": "Payment is required before production starts."
+        },
+        {
+          "q": "Can I choose the colour?",
+          "a": "Yes, most products come in several colours. Shades may vary slightly from the photo depending on the material and your screen."
+        },
+        {
+          "q": "Why can I see small lines on the product?",
+          "a": "Small lines and slight variations are a natural part of 3D printing. They show that the product was built layer by layer."
+        },
+        {
+          "q": "Can I order something completely custom?",
+          "a": "Yes. Send a description, sketch or file. Personal requests must be approved before production."
+        }
+      ],
+      "policies": [
+        {
+          "title": "Orders",
+          "text": "All products are made to order."
+        },
+        {
+          "title": "Delivery time",
+          "text": "Production time varies depending on design and quantity."
+        },
+        {
+          "title": "Payment",
+          "text": "Payment is required before production starts."
+        },
+        {
+          "title": "Custom design",
+          "text": "Personal requests must be approved before production."
+        },
+        {
+          "title": "Personalized products",
+          "text": "Personalized products cannot be returned or exchanged once production has started, unless the item is defective."
+        },
+        {
+          "title": "3D printed products",
+          "text": "Small lines and slight variations are a natural part of the process."
+        },
+        {
+          "title": "Colour and material",
+          "text": "Shades may vary slightly from the photo depending on the material and screen."
+        },
+        {
+          "title": "Problem with your order?",
+          "text": "Contact us as soon as possible, preferably with a photo."
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "p1",
+      "slug": "skulptural-vas",
+      "price": null,
+      "images": [
+        "/images/products/vase-1.jpg"
+      ],
+      "colors": [
+        "#E8DFC9",
+        "#2B2B2B",
+        "#D8285A"
+      ],
+      "instagram": "https://www.instagram.com/p/DdZ67IoDGJm/",
+      "featured": true,
+      "published": true,
+      "order": 1,
+      "createdAt": "2026-09-18T10:00:00.000Z",
+      "updatedAt": "2026-09-18T10:00:00.000Z",
+      "sv": {
+        "name": "Skulptural vas",
+        "tagline": "Skulptural enkelhet för ditt hem.",
+        "description": "Vår 3D-printade vas kombinerar mjuka former med en modern, tidlös design. De vridna ränderna fångar ljuset från alla håll.\n\nFin både som den är och tillsammans med dina favoritblommor. Finns i olika färger.",
+        "priceNote": "",
+        "category": "Inredning",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      },
+      "en": {
+        "name": "Sculptural vase",
+        "tagline": "Sculptural simplicity for your home.",
+        "description": "Our 3D printed vase combines soft shapes with a modern, timeless design. The twisting ridges catch the light from every angle.\n\nBeautiful on its own or with your favourite flowers. Available in different colours.",
+        "priceNote": "",
+        "category": "Home decor",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      }
+    },
+    {
+      "id": "p2",
+      "slug": "cat-bag-clips",
+      "price": null,
+      "images": [
+        "/images/products/cat-clips-1.jpg"
+      ],
+      "colors": [
+        "#5E7A45",
+        "#7A5A44",
+        "#B23A3A",
+        "#E9E4DA",
+        "#2B2B2B"
+      ],
+      "instagram": "https://www.instagram.com/p/DdZ7bCnsINA/",
+      "featured": true,
+      "published": true,
+      "order": 2,
+      "createdAt": "2026-09-18T10:00:00.000Z",
+      "updatedAt": "2026-09-18T10:00:00.000Z",
+      "sv": {
+        "name": "Cat Bag Clips, set om 4",
+        "tagline": "Söta, praktiska och perfekta för köket.",
+        "description": "Våra 3D-printade Cat Bag Clips hjälper till att hålla påsarna stängda och snacksen fräscha.\n\nFyra klämmor i varje set. Finns i olika färger.",
+        "priceNote": "för 4 st",
+        "category": "Kök",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      },
+      "en": {
+        "name": "Cat Bag Clips, set of 4",
+        "tagline": "Cute, practical and perfect for the kitchen.",
+        "description": "Our 3D printed Cat Bag Clips keep bags closed and snacks fresh.\n\nFour clips in every set. Available in different colours.",
+        "priceNote": "for 4",
+        "category": "Kitchen",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      }
+    },
+    {
+      "id": "p3",
+      "slug": "monstera-coasters",
+      "price": null,
+      "images": [
+        "/images/products/coasters-1.jpg"
+      ],
+      "colors": [
+        "#4F7F52",
+        "#6C9A5B"
+      ],
+      "instagram": "https://www.instagram.com/p/DdZ3F4pjmXN/",
+      "featured": true,
+      "published": true,
+      "order": 3,
+      "createdAt": "2026-09-18T10:00:00.000Z",
+      "updatedAt": "2026-09-18T10:00:00.000Z",
+      "sv": {
+        "name": "Monstera Coasters, set om 4",
+        "tagline": "Lite natur i ditt hem.",
+        "description": "Våra Monstera Coasters ger ditt hem en stilren och modern touch. Praktiska, dekorativa och perfekta för kaffe, te eller dina favoritdrycker.\n\nFyra underlägg i varje set.",
+        "priceNote": "för 4 st",
+        "category": "Inredning",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      },
+      "en": {
+        "name": "Monstera Coasters, set of 4",
+        "tagline": "Bring a little nature into your home.",
+        "description": "Our Monstera Coasters give your home a clean, modern touch. Practical, decorative and perfect for coffee, tea or your favourite drinks.\n\nFour coasters in every set.",
+        "priceNote": "for 4",
+        "category": "Home decor",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      }
+    },
+    {
+      "id": "p4",
+      "slug": "cat-hoodie",
+      "price": null,
+      "images": [
+        "/images/products/hoodie-1.jpg"
+      ],
+      "colors": [
+        "#F2EFE8"
+      ],
+      "instagram": "https://www.instagram.com/p/DdZ8eeJDEX3/",
+      "featured": true,
+      "published": true,
+      "order": 4,
+      "createdAt": "2026-09-18T10:00:00.000Z",
+      "updatedAt": "2026-09-18T10:00:00.000Z",
+      "sv": {
+        "name": "Cat Hoodie",
+        "tagline": "Minimal, mysig och gjord för att synas.",
+        "description": "Vår Cat Hoodie med enkel kattdesign, perfekt för dig som gillar clean style med en liten twist.\n\nFinns i olika färger.",
+        "priceNote": "",
+        "category": "Kläder",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      },
+      "en": {
+        "name": "Cat Hoodie",
+        "tagline": "Minimal, cozy and made to stand out.",
+        "description": "Our Cat Hoodie with a simple cat design, perfect if you like a clean style with a little twist.\n\nAvailable in different colours.",
+        "priceNote": "",
+        "category": "Apparel",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      }
+    },
+    {
+      "id": "p5",
+      "slug": "halloween-mesh-bundle",
+      "price": null,
+      "images": [
+        "/images/products/mesh-bundle-1.jpg"
+      ],
+      "colors": [
+        "#EDEDED",
+        "#7B5CD6",
+        "#2B2B2B"
+      ],
+      "instagram": "https://www.instagram.com/p/DeXbzbMEVW6/",
+      "featured": true,
+      "published": true,
+      "order": 5,
+      "createdAt": "2026-09-18T10:00:00.000Z",
+      "updatedAt": "2026-09-18T10:00:00.000Z",
+      "sv": {
+        "name": "Halloween Mesh Bundle",
+        "tagline": "Spöke, fladdermus och spindelnät i lätt mesh.",
+        "description": "Söta och unika 3D-printade dekorationer: ett charmigt litet spöke, en söt lila fladdermus och ett spindelnät med fina detaljer.\n\nLätt och hållbar mesh som passar för bad och leksaker eller för att dekorera hemmet. Fin att ge bort som en liten Halloween-present.\n\nBegränsat antal.",
+        "priceNote": "",
+        "category": "Säsong",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      },
+      "en": {
+        "name": "Halloween Mesh Bundle",
+        "tagline": "A ghost, a bat and a spider web in light mesh.",
+        "description": "Cute and unique 3D printed decorations: a charming little ghost, a sweet purple bat and a finely detailed spider web.\n\nLight, durable mesh that works for bath time and toys, or as decoration around the home. A nice little Halloween gift.\n\nLimited quantity.",
+        "priceNote": "",
+        "category": "Seasonal",
+        "material": "",
+        "dimensions": "",
+        "leadTime": ""
+      }
+    }
+  ],
+  "inquiries": []
+}

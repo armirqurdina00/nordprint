@@ -6,7 +6,7 @@ const sv = {
   switchLabel: "Byt språk till engelska",
   skip: "Hoppa till innehållet",
   homeLabel: "NordPrint Studio, till startsidan",
-  nav: { products: "Produkter", how: "Så funkar det", faq: "Frågor", terms: "Villkor", order: "Beställ", menu: "Meny", close: "Stäng", main: "Huvudmeny" },
+  nav: { products: "Produkter", how: "Så funkar det", faq: "Frågor", terms: "Villkor", order: "Beställ", menu: "Öppna menyn", close: "Stäng menyn", main: "Huvudmeny" },
   meta: {
     title: "NordPrint Studio – 3D-design och 3D-print i Kungälv",
     description: "Innovativa idéer. Unika produkter. NordPrint Studio designar och 3D-printar inredning, vardagsprylar och specialbeställningar i Sverige.",
@@ -114,7 +114,7 @@ const en: Dict = {
   switchLabel: "Switch language to Swedish",
   skip: "Skip to content",
   homeLabel: "NordPrint Studio, home",
-  nav: { products: "Products", how: "How it works", faq: "FAQ", terms: "Terms", order: "Order", menu: "Menu", close: "Close", main: "Main menu" },
+  nav: { products: "Products", how: "How it works", faq: "FAQ", terms: "Terms", order: "Order", menu: "Open menu", close: "Close menu", main: "Main menu" },
   meta: {
     title: "NordPrint Studio – 3D design and 3D printing in Kungälv, Sweden",
     description: "Innovative ideas. Unique products. NordPrint Studio designs and 3D prints home decor, everyday items and custom orders in Sweden.",

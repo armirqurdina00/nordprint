@@ -30,7 +30,7 @@ export default async function SiteLayout({ children, params }: Props) {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-paper focus:px-4 focus:py-2">
         {t(lang).skip}
       </a>
-      <Header lang={lang} announcement={text.announcement} logo={settings.logo} />
+      <Header lang={lang} announcement={text.announcement} logo={settings.logo} instagram={settings.instagram} />
       <main id="main">{children}</main>
       <Footer lang={lang} settings={settings} />
     </>

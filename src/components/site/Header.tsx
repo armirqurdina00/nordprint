@@ -4,8 +4,9 @@ import { t } from "@/lib/i18n";
 import { ANCHORS, href } from "@/lib/routes";
 import Logo from "./Logo";
 import LangSwitch from "./LangSwitch";
+import MobileMenu from "./MobileMenu";
 
-export default function Header({ lang, announcement, logo }: { lang: Lang; announcement: string; logo: string }) {
+export default function Header({ lang, announcement, logo, instagram }: { lang: Lang; announcement: string; logo: string; instagram: string }) {
   const d = t(lang);
   const home = href(lang, "home");
   const nav = [
@@ -34,23 +35,17 @@ export default function Header({ lang, announcement, logo }: { lang: Lang; annou
               {d.nav.order}
             </Link>
           </nav>
-          <details className="group relative md:hidden">
-            <summary className="flex h-10 cursor-pointer list-none items-center rounded-full px-4 font-medium ring-1 ring-granite [&::-webkit-details-marker]:hidden">
-              <span className="group-open:hidden">{d.nav.menu}</span>
-              <span className="hidden group-open:inline">{d.nav.close}</span>
-            </summary>
-            <nav className="absolute right-0 mt-2 w-60 rounded-2xl bg-paper p-2 shadow-xl ring-1 ring-mist" aria-label={d.nav.main}>
-              {nav.map((n) => (
-                <Link key={n.href} href={n.href} className="block rounded-xl px-4 py-3 font-medium hover:bg-snow">
-                  {n.label}
-                </Link>
-              ))}
-              <LangSwitch {...switchProps} className="block rounded-xl px-4 py-3 font-medium text-fjord hover:bg-snow" />
-              <Link href={href(lang, "order")} className="btn btn-primary mt-1 w-full">
-                {d.nav.order}
-              </Link>
-            </nav>
-          </details>
+          <MobileMenu
+            lang={lang}
+            items={nav}
+            order={{ href: href(lang, "order"), label: d.nav.order }}
+            switchText={d.switchTo}
+            switchLabel={d.switchLabel}
+            instagram={instagram}
+            openLabel={d.nav.menu}
+            closeLabel={d.nav.close}
+            navLabel={d.nav.main}
+          />
         </div>
       </div>
     </header>

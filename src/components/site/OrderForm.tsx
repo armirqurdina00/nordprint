@@ -136,7 +136,13 @@ export default function OrderForm({
                   <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
                 )}
                 <span
-                  className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
+                  // with the colour picker the selection lives in state: draw the ring from it, as some browsers
+                  // (Safari) don't restyle the swatch when the radio is unchecked from script
+                  className={`block h-9 w-9 rounded-full peer-focus-visible:outline-2 peer-focus-visible:outline-hallon ${
+                    selected.allColors
+                      ? picked === c ? "ring-[3px] ring-granite" : "ring-1 ring-black/10"
+                      : "ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite"
+                  }`}
                   style={{ background: c }}
                   title={c}
                 />

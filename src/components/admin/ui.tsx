@@ -38,9 +38,15 @@ export function ConfirmButton({ children, confirmText }: { children: React.React
     return () => clearTimeout(t);
   }, [armed]);
   return (
+    // always a submit button; the first click is cancelled. Switching `type` on click does not work: React applies
+    // the new type before the browser runs the click's default action, so the first click would already submit.
     <button
-      type={armed ? "submit" : "button"}
-      onClick={() => !armed && setArmed(true)}
+      type="submit"
+      onClick={(e) => {
+        if (armed) return;
+        e.preventDefault();
+        setArmed(true);
+      }}
       className={`btn ${armed ? "bg-hallon-dark text-white" : "text-hallon-dark ring-[1.5px] ring-inset ring-hallon-soft hover:bg-hallon-soft"}`}
     >
       {armed ? confirmText : children}

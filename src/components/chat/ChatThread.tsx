@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useLayoutEffect, useRef } from "react";
-import type { ChatFrom, ChatMessage } from "@/lib/types";
+import type { ChatFrom, ChatMessage, ChatProductRef } from "@/lib/types";
 import { dayLabel, fileName, isImage, timeLabel, type Pending } from "@/lib/chat-client";
 import { usePreviews } from "@/components/site/FilePicker";
 
@@ -16,7 +16,46 @@ export type ThreadLabels = {
   retry: string;
   sending: string;
   log: string;
+  about: string;
 };
+
+/** The product a message is about, as a small card that links to the product page. */
+export function ProductRef({ product, href, label, mine, onRemove, removeLabel }: { product: ChatProductRef; href?: string; label: string; mine?: boolean; onRemove?: () => void; removeLabel?: string }) {
+  const body = (
+    <>
+      {product.image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={product.image} alt="" className="h-11 w-11 shrink-0 rounded-lg object-cover" />
+      ) : (
+        <span className="h-11 w-11 shrink-0 rounded-lg bg-mist" />
+      )}
+      <span className="min-w-0 flex-1 leading-tight">
+        <span className="block text-xs text-fjord">{label}</span>
+        <span className="block truncate font-semibold">{product.name}</span>
+      </span>
+    </>
+  );
+  const cls = `flex w-64 max-w-[85%] items-center gap-3 rounded-2xl bg-paper p-2 pr-3 text-granite ring-1 ring-mist ${mine ? "self-end" : "self-start"}`;
+  if (onRemove) {
+    return (
+      <div className={`${cls} w-full max-w-none`}>
+        {body}
+        <button type="button" onClick={onRemove} aria-label={removeLabel} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-fjord hover:bg-snow hover:text-granite">
+          <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+    );
+  }
+  return href ? (
+    <a href={href} target="_blank" rel="noopener" className={`${cls} transition-shadow hover:ring-granite`}>
+      {body}
+    </a>
+  ) : (
+    <div className={cls}>{body}</div>
+  );
+}
 
 const URL_RE = /(https?:\/\/[^\s<>"]+[^\s<>".,;:!?)\]])/g;
 
@@ -82,6 +121,7 @@ function PendingMessage({ p, labels, onRetry }: { p: Pending; labels: ThreadLabe
   const previews = usePreviews(p.files);
   return (
     <li className="flex flex-col items-end gap-1.5">
+      {p.product && <ProductRef product={p.product} label={labels.about} mine />}
       <Attachments mine fileLabel={labels.file} items={p.files.map((f, i) => ({ href: "", name: f.name, src: previews[i] || undefined }))} />
       {p.text && (
         <p className={`max-w-[85%] whitespace-pre-wrap break-words rounded-[20px] rounded-br-md bg-granite px-4 py-2.5 text-snow ${p.state === "sending" ? "opacity-70" : ""}`}>
@@ -114,6 +154,7 @@ export default function ChatThread({
   labels,
   seenAt,
   onRetry,
+  productHref,
   intro,
   footer,
   className = "",
@@ -125,6 +166,7 @@ export default function ChatThread({
   labels: ThreadLabels;
   seenAt?: string;
   onRetry: (key: string) => void;
+  productHref: (slug: string) => string;
   intro?: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
@@ -184,6 +226,7 @@ export default function ChatThread({
                 <span className="sr-only">
                   {isMine ? labels.you : labels.other}, {timeLabel(m.at, locale)}:
                 </span>
+                {m.product && <ProductRef product={m.product} href={productHref(m.product.slug)} label={labels.about} mine={isMine} />}
                 <Attachments mine={isMine} fileLabel={labels.file} items={m.files.map((f) => ({ href: f, name: fileName(f), src: isImage(f) ? f : undefined }))} />
                 {m.text && (
                   <p

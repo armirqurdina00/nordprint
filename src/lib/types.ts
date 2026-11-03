@@ -89,7 +89,11 @@ export type ChatMessage = {
   from: ChatFrom;
   text: string;
   files: string[];
+  /** the product the visitor asked about (from "Fråga i chatten" on a product page) */
+  product?: ChatProductRef;
 };
+
+export type ChatProductRef = { slug: string; name: string; image: string };
 
 export type ChatStatus = "open" | "closed";
 

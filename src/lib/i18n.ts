@@ -46,6 +46,8 @@ const sv = {
     leadTime: "Leveranstid",
     onRequest: "Pris på förfrågan",
     seeOnInstagram: "Se inlägget på Instagram",
+    askInChat: "Fråga i chatten",
+    instagramDm: "Skriv på Instagram",
     imageSoon: "bild kommer snart",
   },
   order: {
@@ -146,6 +148,9 @@ const sv = {
     errUnavailable: "Chatten är inte tillgänglig just nu. Skicka en förfrågan istället.",
     errNetwork: "Ingen kontakt med servern. Kontrollera uppkopplingen och försök igen.",
     errMaxFiles: (n: number) => `Högst ${n} filer per meddelande.`,
+    about: "Gäller",
+    placeholderAbout: (name: string) => `Din fråga om ${name}…`,
+    removeTopic: (name: string) => `Ta bort ${name} från meddelandet`,
   },
 };
 
@@ -197,6 +202,8 @@ const en: Dict = {
     leadTime: "Lead time",
     onRequest: "Price on request",
     seeOnInstagram: "See the post on Instagram",
+    askInChat: "Ask in the chat",
+    instagramDm: "Message us on Instagram",
     imageSoon: "photo coming soon",
   },
   order: {
@@ -297,6 +304,9 @@ const en: Dict = {
     errUnavailable: "The chat isn't available right now. Send a request instead.",
     errNetwork: "Couldn't reach the server. Check your connection and try again.",
     errMaxFiles: (n: number) => `At most ${n} files per message.`,
+    about: "About",
+    placeholderAbout: (name: string) => `Your question about ${name}…`,
+    removeTopic: (name: string) => `Remove ${name} from the message`,
   },
 };
 

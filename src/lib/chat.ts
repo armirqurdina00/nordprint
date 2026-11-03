@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { Redis } from "@upstash/redis";
 import { READ_ONLY, redisEnv } from "./db";
-import type { ChatFrom, ChatMessage, ChatStatus, Conversation, Lang } from "./types";
+import type { ChatFrom, ChatMessage, ChatProductRef, ChatStatus, Conversation, Lang } from "./types";
 
 /**
  * Chat storage. Kept apart from the site content so that many visitors can write at the same time:
@@ -74,7 +74,15 @@ function parseMeta(raw: Record<string, unknown> | null, unreadAdmin: unknown): C
 function parseMessage(raw: unknown, id: number): ChatMessage | null {
   try {
     const m = (typeof raw === "string" ? JSON.parse(raw) : raw) as StoredMessage;
-    return { id, at: String(m.at), from: m.from === "admin" ? "admin" : "visitor", text: String(m.text ?? ""), files: Array.isArray(m.files) ? m.files.map(String) : [] };
+    const p = m.product;
+    return {
+      id,
+      at: String(m.at),
+      from: m.from === "admin" ? "admin" : "visitor",
+      text: String(m.text ?? ""),
+      files: Array.isArray(m.files) ? m.files.map(String) : [],
+      ...(p && p.slug ? { product: { slug: String(p.slug), name: String(p.name ?? ""), image: String(p.image ?? "") } } : {}),
+    };
   } catch {
     return null;
   }
@@ -166,8 +174,8 @@ export async function getMessages(id: string, after = 0): Promise<ChatMessage[]>
   return raw.map((m, i) => parseMessage(m, from + i)).filter((m): m is ChatMessage => !!m);
 }
 
-export async function addMessage(id: string, from: ChatFrom, text: string, files: string[]): Promise<ChatMessage> {
-  const msg: StoredMessage = { at: new Date().toISOString(), from, text, files };
+export async function addMessage(id: string, from: ChatFrom, text: string, files: string[], product?: ChatProductRef): Promise<ChatMessage> {
+  const msg: StoredMessage = { at: new Date().toISOString(), from, text, files, ...(product ? { product } : {}) };
   const update = { updatedAt: msg.at, lastFrom: from, status: "open" as ChatStatus, preview: preview(text) };
   if (redis) {
     const length = await redis.rpush(msgsKey(id), JSON.stringify(msg));

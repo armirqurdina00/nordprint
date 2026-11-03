@@ -17,3 +17,9 @@ export function slugify(input: string) {
     .replace(/[\s_]+/g, "-")
     .replace(/-+/g, "-");
 }
+
+/** Direct-message link (ig.me opens the DM in the app or on the web) for an Instagram profile URL. */
+export function instagramDm(profileUrl: string) {
+  const m = /instagram\.com\/([A-Za-z0-9._]+)/i.exec(profileUrl);
+  return m && !["p", "reel", "stories"].includes(m[1]) ? `https://ig.me/m/${m[1]}` : profileUrl;
+}

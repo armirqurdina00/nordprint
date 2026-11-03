@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { t } from "@/lib/i18n";
-import type { ChatMessage, ChatStatus, Lang } from "@/lib/types";
+import type { ChatMessage, ChatProductRef, ChatStatus, Lang } from "@/lib/types";
 import type { BlobMode, UploadError } from "@/lib/upload-rules";
-import { errorInfo, mergeMessages, nextId, postMessage, request, usePoll, type Pending } from "@/lib/chat-client";
-import ChatThread from "@/components/chat/ChatThread";
+import { CHAT_ABOUT_EVENT, errorInfo, mergeMessages, nextId, postMessage, request, usePoll, type Pending } from "@/lib/chat-client";
+import { href } from "@/lib/routes";
+import ChatThread, { ProductRef } from "@/components/chat/ChatThread";
 import ChatComposer from "@/components/chat/ChatComposer";
 import { NPMark } from "./Logo";
 
@@ -38,6 +39,8 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [pending, setPending] = useState<Pending[]>([]);
   const [skipContact, setSkipContact] = useState(true);
+  // product the next message is about, set by "Fråga i chatten" on a product page
+  const [topic, setTopic] = useState<ChatProductRef | null>(null);
   const launcher = useRef<HTMLButtonElement>(null);
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
@@ -71,6 +74,15 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
     },
     [d, order]
   );
+
+  useEffect(() => {
+    const onAbout = (e: Event) => {
+      setTopic((e as CustomEvent<ChatProductRef>).detail);
+      setOpen(true);
+    };
+    window.addEventListener(CHAT_ABOUT_EVENT, onAbout);
+    return () => window.removeEventListener(CHAT_ABOUT_EVENT, onAbout);
+  }, []);
 
   const reset = () => {
     setActive(false);
@@ -129,7 +141,8 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
   };
 
   const send = (text: string, files: File[]) => {
-    const p: Pending = { key: crypto.randomUUID(), text, files, state: "sending" };
+    const p: Pending = { key: crypto.randomUUID(), text, files, product: topic ?? undefined, state: "sending" };
+    setTopic(null);
     setPending((list) => [...list, p]);
     deliver(p);
   };
@@ -211,7 +224,8 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
           locale={locale}
           seenAt={view?.adminSeenAt}
           onRetry={retry}
-          labels={{ you: d.you, other: d.studio, seen: d.seen, today: d.today, yesterday: d.yesterday, file: d.file, failed: d.failed, retry: d.retry, sending: d.sending, log: d.log }}
+          labels={{ you: d.you, other: d.studio, seen: d.seen, today: d.today, yesterday: d.yesterday, file: d.file, failed: d.failed, retry: d.retry, sending: d.sending, log: d.log, about: d.about }}
+          productHref={(slug) => href(lang, "products", slug)}
           intro={
             <li className="mb-2 flex flex-col items-start">
               <p className="max-w-[85%] rounded-[20px] rounded-bl-md bg-paper px-4 py-2.5 ring-1 ring-mist">{d.welcome}</p>
@@ -246,12 +260,17 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
         />
 
         <div className="border-t border-mist bg-paper px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
+          {topic && (
+            <div className="mb-2.5">
+              <ProductRef product={topic} label={d.about} onRemove={() => setTopic(null)} removeLabel={d.removeTopic(topic.name)} />
+            </div>
+          )}
           <ChatComposer
             id={inputId}
             autoFocus={open}
             onSend={send}
             fileError={(e: UploadError) => errorText(e)}
-            labels={{ placeholder: d.placeholder, send: d.send, attach: d.attach, removeFile: d.removeFile, maxFiles: d.errMaxFiles, empty: d.errEmpty }}
+            labels={{ placeholder: topic ? d.placeholderAbout(topic.name) : d.placeholder, send: d.send, attach: d.attach, removeFile: d.removeFile, maxFiles: d.errMaxFiles, empty: d.errEmpty }}
           />
         </div>
       </section>

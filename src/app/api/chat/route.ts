@@ -43,14 +43,16 @@ export async function POST(req: Request) {
   // honeypot for bots: pretend it worked
   if (String(form.get("website") ?? "")) return json({ message: null });
 
-  const input = await readMessage(form);
-  if ("error" in input) return err(input);
-
+  const formLang = String(form.get("lang") ?? "");
   let id = await visitorChatId();
   let conversation = id ? await getConversation(id) : null;
+
+  const input = await readMessage(form, conversation?.lang ?? (isLang(formLang) ? formLang : "sv"));
+  if ("error" in input) return err(input);
+
   if (!conversation) {
     if (!(await rateLimit(`chat-new:${ip}`, 6, 3600))) return err({ error: "rate" }, 429);
-    const lang = String(form.get("lang") ?? "");
+    const lang = formLang;
     const page = String(form.get("page") ?? "");
     conversation = await createConversation({
       lang: isLang(lang) ? lang : "sv",
@@ -61,7 +63,7 @@ export async function POST(req: Request) {
     id = conversation.id;
     await setVisitorChat(id);
   }
-  const message = await addMessage(conversation.id, "visitor", input.text, input.files);
+  const message = await addMessage(conversation.id, "visitor", input.text, input.files, input.product);
   return json({ message, conversation: view({ ...conversation, status: "open" }) });
 }
 

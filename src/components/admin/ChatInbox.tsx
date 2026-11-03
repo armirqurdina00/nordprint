@@ -342,7 +342,8 @@ function ConversationPane({
           const p = pending.find((x) => x.key === key);
           if (p) deliver(p);
         }}
-        labels={{ you: t.chat.you, other: name, seen: t.chat.seen, today: t.chat.today, yesterday: t.chat.yesterday, file: t.chat.attachment, failed: t.chat.failed, retry: t.chat.retry, sending: t.chat.sending, log: t.chat.log }}
+        labels={{ you: t.chat.you, other: name, seen: t.chat.seen, today: t.chat.today, yesterday: t.chat.yesterday, file: t.chat.attachment, failed: t.chat.failed, retry: t.chat.retry, sending: t.chat.sending, log: t.chat.log, about: t.chat.about }}
+        productHref={(slug) => `/produkter/${slug}`}
       />
 
       <div className="border-t border-mist bg-paper p-3">

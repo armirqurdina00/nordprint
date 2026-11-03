@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getProductBySlug, getPublishedProducts } from "@/lib/db";
-import { formatPrice } from "@/lib/format";
+import { getProductBySlug, getPublishedProducts, getSettings } from "@/lib/db";
+import { formatPrice, instagramDm } from "@/lib/format";
 import { isLang, t } from "@/lib/i18n";
 import { localProduct } from "@/lib/localize";
 import { CATEGORY_PARAM, PRODUCT_PARAM, href } from "@/lib/routes";
 import ProductImage from "@/components/site/ProductImage";
 import ProductCard from "@/components/site/ProductCard";
+import AskInChat from "@/components/site/AskInChat";
+import { chatEnabled } from "@/lib/chat";
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
 
@@ -26,6 +28,8 @@ export default async function ProductPage({ params }: Props) {
   const raw = await getProductBySlug(slug);
   if (!raw) notFound();
   const product = localProduct(raw, lang);
+  const { instagram } = await getSettings();
+  const shortName = product.name.split(",")[0];
   const related = (await getPublishedProducts())
     .map((p) => localProduct(p, lang))
     .filter((p) => p.id !== product.id && p.category === product.category)
@@ -82,9 +86,28 @@ export default async function ProductPage({ params }: Props) {
               </ul>
             </div>
           )}
-          <Link href={`${href(lang, "order")}?${PRODUCT_PARAM[lang]}=${product.slug}`} className="btn btn-primary mt-8 w-full sm:w-auto">
-            {d.orderThis(product.name.split(",")[0])}
-          </Link>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <Link href={`${href(lang, "order")}?${PRODUCT_PARAM[lang]}=${product.slug}`} className="btn btn-primary w-full sm:col-span-2">
+              {d.orderThis(shortName)}
+            </Link>
+            {chatEnabled && (
+              <AskInChat
+                product={{ slug: product.slug, name: shortName, image: product.images[0] ?? "" }}
+                label={d.askInChat}
+                className={`btn btn-ghost w-full ${instagram ? "" : "sm:col-span-2"}`}
+              />
+            )}
+            {instagram && (
+              <a href={instagramDm(instagram)} target="_blank" rel="noopener" className={`btn btn-ghost w-full ${chatEnabled ? "" : "sm:col-span-2"}`}>
+                <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+                </svg>
+                {d.instagramDm}
+              </a>
+            )}
+          </div>
           <div className="prose-np mt-8 max-w-prose">
             {product.description.split(/\n\s*\n/).map((para, i) => <p key={i}>{para}</p>)}
           </div>

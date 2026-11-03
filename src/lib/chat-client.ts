@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { ChatMessage } from "./types";
+import type { ChatMessage, ChatProductRef } from "./types";
 import { moveFilesToBlob } from "./upload-client";
 import { MAX_CHAT_FILES, UploadError, type BlobMode } from "./upload-rules";
 
 /** A message typed in this browser that is not confirmed by the server yet. */
-export type Pending = { key: string; text: string; files: File[]; state: "sending" | "failed"; error?: string };
+export type Pending = { key: string; text: string; files: File[]; product?: ChatProductRef; state: "sending" | "failed"; error?: string };
 
 /** Error answer of a chat endpoint (see chat-input.ts). */
 export class ChatRequestError extends Error {
@@ -48,6 +48,13 @@ export function usePoll(fn: () => unknown, ms: number, active = true) {
   }, [ms, active]);
 }
 
+export const CHAT_ABOUT_EVENT = "np:chat-about";
+
+/** Opens the website chat with a product attached to the next message (see ChatWidget). */
+export function openChatAbout(product: ChatProductRef) {
+  window.dispatchEvent(new CustomEvent<ChatProductRef>(CHAT_ABOUT_EVENT, { detail: product }));
+}
+
 /** Adds new messages to a list, without duplicates, in order. */
 export function mergeMessages(list: ChatMessage[], incoming: ChatMessage[]) {
   if (incoming.length === 0) return list;
@@ -64,6 +71,7 @@ export async function postMessage(url: string, p: Pending, direct: BlobMode, ext
   form.set("text", p.text);
   for (const [k, v] of Object.entries(extra)) form.set(k, v);
   for (const f of p.files) form.append("files", f);
+  if (p.product) form.set("product", p.product.slug);
   if (direct && p.files.length) await moveFilesToBlob(form, "files", "chat", direct, MAX_CHAT_FILES);
   return request<{ message: ChatMessage | null; conversation?: unknown }>(url, { method: "POST", body: form });
 }

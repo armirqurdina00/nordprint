@@ -38,8 +38,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  // first visit to the start page with a non-Nordic browser language: offer English
-  if (parts.length === 0 && !req.cookies.get("np_lang") && prefersEnglish(req)) {
+  // start page: honour a language chosen earlier with the switch; on a first visit with a non-Nordic browser language, offer English
+  const chosen = req.cookies.get("np_lang")?.value;
+  if (parts.length === 0 && (chosen === "en" || (!chosen && prefersEnglish(req)))) {
     const url = req.nextUrl.clone();
     url.pathname = "/en";
     return NextResponse.redirect(url);

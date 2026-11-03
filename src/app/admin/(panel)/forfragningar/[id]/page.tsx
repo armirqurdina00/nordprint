@@ -6,11 +6,12 @@ import InquiryForm from "@/components/admin/InquiryForm";
 import StatusPill from "@/components/admin/StatusPill";
 import { ConfirmButton } from "@/components/admin/ui";
 import { deleteInquiry } from "../../../actions";
-import { getAdminT } from "@/lib/admin-lang";
+import { getAdminLang, getAdminT } from "@/lib/admin-lang";
+import { productText } from "@/lib/localize";
 
 export default async function InquiryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [{ inquiries, products }, t] = await Promise.all([getContent(), getAdminT()]);
+  const [{ inquiries, products }, t, lang] = await Promise.all([getContent(), getAdminT(), getAdminLang()]);
   const q = inquiries.find((x) => x.id === id);
   if (!q) notFound();
   const product = products.find((p) => p.slug === q.productSlug);
@@ -36,7 +37,7 @@ export default async function InquiryPage({ params }: { params: Promise<{ id: st
         <div className="space-y-6">
           <section className="rounded-2xl bg-paper p-6 ring-1 ring-mist">
             <dl className="grid gap-4 sm:grid-cols-2">
-              <div><dt className="hint">{t.inquiry.concerns}</dt><dd className="font-medium">{product ? <Link className="underline" href={`/admin/produkter/${product.id}`}>{product.sv.name}</Link> : t.inquiry.customIdeaOrFile}</dd></div>
+              <div><dt className="hint">{t.inquiry.concerns}</dt><dd className="font-medium">{product ? <Link className="underline" href={`/admin/produkter/${product.id}`}>{productText(product, lang).name}</Link> : t.inquiry.customIdeaOrFile}</dd></div>
               <div><dt className="hint">{t.inquiry.quantity}</dt><dd className="font-medium">{q.quantity || "1"}</dd></div>
               <div><dt className="hint">{t.inquiry.email}</dt><dd className="font-medium"><a className="underline" href={`mailto:${q.email}`}>{q.email}</a></dd></div>
               <div><dt className="hint">{t.inquiry.phone}</dt><dd className="font-medium">{q.phone ? <a className="underline" href={`tel:${q.phone}`}>{q.phone}</a> : t.inquiry.notGiven}</dd></div>

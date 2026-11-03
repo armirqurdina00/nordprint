@@ -5,10 +5,11 @@ import ProductForm from "@/components/admin/ProductForm";
 import { blobMode } from "@/lib/uploads";
 import { ConfirmButton } from "@/components/admin/ui";
 import { deleteProduct } from "../../../actions";
-import { getAdminT } from "@/lib/admin-lang";
+import { getAdminLang, getAdminT } from "@/lib/admin-lang";
+import { productText } from "@/lib/localize";
 
 export default async function EditProduct({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ skapad?: string }> }) {
-  const [{ id }, { skapad }, { products }, t] = await Promise.all([params, searchParams, getContent(), getAdminT()]);
+  const [{ id }, { skapad }, { products }, t, lang] = await Promise.all([params, searchParams, getContent(), getAdminT(), getAdminLang()]);
   const cats = (l: "sv" | "en") => [...new Set(products.map((p) => p[l].category).filter(Boolean))].sort();
   const categories = { sv: cats("sv"), en: cats("en") };
   const isNew = id === "ny";
@@ -19,7 +20,7 @@ export default async function EditProduct({ params, searchParams }: { params: Pr
     <>
       <Link href="/admin/produkter" className="text-fjord hover:text-granite">{t.product.all}</Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-sans text-3xl font-semibold tracking-normal">{product ? product.sv.name : t.product.newTitle}</h1>
+        <h1 className="font-sans text-3xl font-semibold tracking-normal">{product ? productText(product, lang).name : t.product.newTitle}</h1>
         {product && (
           <form action={deleteProduct}>
             <input type="hidden" name="id" value={product.id} />

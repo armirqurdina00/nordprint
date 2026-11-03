@@ -2,11 +2,12 @@ import Link from "next/link";
 import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
-import { getAdminT } from "@/lib/admin-lang";
+import { getAdminLang, getAdminT } from "@/lib/admin-lang";
+import { productText } from "@/lib/localize";
 import { chatSummary } from "@/lib/chat";
 
 export default async function Dashboard() {
-  const [{ products, inquiries }, t, chat] = await Promise.all([getContent(), getAdminT(), chatSummary()]);
+  const [{ products, inquiries }, t, chat, lang] = await Promise.all([getContent(), getAdminT(), chatSummary(), getAdminLang()]);
   const stats = [
     { label: t.dashboard.statNew, value: inquiries.filter((i) => i.status === "ny").length, href: "/admin/forfragningar?status=ny" },
     { label: t.dashboard.statOngoing, value: inquiries.filter((i) => i.status === "pågår").length, href: "/admin/forfragningar?status=pågår" },
@@ -45,7 +46,7 @@ export default async function Dashboard() {
             {t.dashboard.missingPhotosText}{" "}
             {missingPhotos.map((p, i) => (
               <span key={p.id}>
-                <Link className="font-medium text-granite underline" href={`/admin/produkter/${p.id}`}>{p.sv.name}</Link>
+                <Link className="font-medium text-granite underline" href={`/admin/produkter/${p.id}`}>{productText(p, lang).name}</Link>
                 {i < missingPhotos.length - 1 ? ", " : ""}
               </span>
             ))}

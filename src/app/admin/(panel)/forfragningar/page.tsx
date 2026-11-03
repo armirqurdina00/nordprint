@@ -3,12 +3,13 @@ import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
 import type { InquiryStatus } from "@/lib/types";
-import { getAdminT } from "@/lib/admin-lang";
+import { getAdminLang, getAdminT } from "@/lib/admin-lang";
+import { productText } from "@/lib/localize";
 
 
 export default async function Inquiries({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   const { status = "" } = await searchParams;
-  const [{ inquiries, products }, t] = await Promise.all([getContent(), getAdminT()]);
+  const [{ inquiries, products }, t, lang] = await Promise.all([getContent(), getAdminT(), getAdminLang()]);
   const FILTERS: { value: string; label: string }[] = [
     { value: "", label: t.inquiries.active },
     { value: "ny", label: t.inquiries.new },
@@ -17,7 +18,10 @@ export default async function Inquiries({ searchParams }: { searchParams: Promis
     { value: "arkiverad", label: t.inquiries.archived },
   ];
   const list = status ? inquiries.filter((q) => q.status === (status as InquiryStatus)) : inquiries.filter((q) => q.status !== "arkiverad");
-  const productName = (slug: string) => products.find((p) => p.slug === slug)?.sv.name ?? t.inquiries.customIdea;
+  const productName = (slug: string) => {
+    const p = products.find((x) => x.slug === slug);
+    return p ? productText(p, lang).name : t.inquiries.customIdea;
+  };
 
   return (
     <>

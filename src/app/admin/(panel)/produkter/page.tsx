@@ -3,10 +3,11 @@ import { getContent } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import ProductImage from "@/components/site/ProductImage";
 import { moveProduct, togglePublished } from "../../actions";
-import { getAdminT } from "@/lib/admin-lang";
+import { getAdminLang, getAdminT } from "@/lib/admin-lang";
+import { productText } from "@/lib/localize";
 
 export default async function AdminProducts() {
-  const [content, t] = await Promise.all([getContent(), getAdminT()]);
+  const [content, t, lang] = await Promise.all([getContent(), getAdminT(), getAdminLang()]);
   const products = content.products.sort((a, b) => a.order - b.order);
   return (
     <>
@@ -23,15 +24,17 @@ export default async function AdminProducts() {
         </p>
       ) : (
         <ul className="mt-8 divide-y divide-mist overflow-hidden rounded-2xl bg-paper ring-1 ring-mist">
-          {products.map((p, i) => (
+          {products.map((p, i) => {
+            const text = productText(p, lang);
+            return (
             <li key={p.id} className="flex items-center gap-4 px-4 py-3">
               <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-                <ProductImage product={{ ...p, name: p.sv.name }} className="[&>span]:p-1.5 [&>span]:text-xs" />
+                <ProductImage product={{ ...p, name: text.name }} className="[&>span]:p-1.5 [&>span]:text-xs" />
               </div>
               <Link href={`/admin/produkter/${p.id}`} className="min-w-0 flex-1 hover:text-hallon">
-                <p className="truncate font-semibold">{p.sv.name}</p>
+                <p className="truncate font-semibold">{text.name}</p>
                 <p className="text-sm text-fjord">
-                  {p.sv.category || t.products.noCategory}, {p.price === null ? t.products.onRequest : formatPrice(p.price, t.locale === "en-GB" ? "en" : "sv")}
+                  {text.category || t.products.noCategory}, {p.price === null ? t.products.onRequest : formatPrice(p.price, t.locale === "en-GB" ? "en" : "sv")}
                   {p.featured ? t.products.onHome : ""}
                   {!p.en.name && <span className="ml-2 rounded-full bg-hallon-soft px-2 py-0.5 text-xs font-medium text-hallon-dark">{t.products.missingEnglish}</span>}
                 </p>
@@ -53,7 +56,7 @@ export default async function AdminProducts() {
                     <button
                       disabled={dir === "up" ? i === 0 : i === products.length - 1}
                       className="grid h-8 w-8 place-items-center rounded-full ring-1 ring-mist hover:ring-granite disabled:opacity-30"
-                      aria-label={dir === "up" ? t.products.moveUp(p.sv.name) : t.products.moveDown(p.sv.name)}
+                      aria-label={dir === "up" ? t.products.moveUp(text.name) : t.products.moveDown(text.name)}
                     >
                       {dir === "up" ? "↑" : "↓"}
                     </button>
@@ -61,7 +64,8 @@ export default async function AdminProducts() {
                 ))}
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </>

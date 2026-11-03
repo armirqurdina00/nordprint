@@ -212,7 +212,7 @@ const en: Dict = {
     onRequest: "Price on request",
     seeOnInstagram: "See the post on Instagram",
     askInChat: "Ask in the chat",
-    instagramDm: "Message us on Instagram",
+    instagramDm: "Instagram message",
     imageSoon: "photo coming soon",
   },
   order: {

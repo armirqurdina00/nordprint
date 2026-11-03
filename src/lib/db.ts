@@ -131,3 +131,10 @@ export async function getProductBySlug(slug: string) {
 export function newId() {
   return crypto.randomUUID().slice(0, 8) + Date.now().toString(36);
 }
+
+/** New requests and a short fingerprint that changes whenever a request is added, removed or changes status. */
+export function inquirySummary(inquiries: Content["inquiries"]) {
+  let h = 5381;
+  for (const q of inquiries) for (const ch of `${q.id}:${q.status};`) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
+  return { newCount: inquiries.filter((q) => q.status === "ny").length, rev: h.toString(36) };
+}

@@ -8,12 +8,14 @@ import Logo from "@/components/site/Logo";
 import AdminNav from "./AdminNav";
 import { AdminLangSwitch, useAdminT } from "./AdminI18n";
 import { useChatLive } from "./ChatLive";
+import { useInquiryLive } from "./InquiryLive";
 
 /** Admin sidebar: fixed on desktop, a slide-in drawer behind a top bar on small screens. */
-export default function AdminChrome({ newCount, logo }: { newCount: number; logo: string }) {
+export default function AdminChrome({ logo }: { logo: string }) {
   const [open, setOpen] = useState(false);
   const { t } = useAdminT();
   const { unread } = useChatLive();
+  const { newCount } = useInquiryLive();
   const pathname = usePathname();
   const burger = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -127,14 +129,14 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
             </svg>
           </button>
         </div>
-        <AdminNav newCount={newCount} onNavigate={() => setOpen(false)} />
+        <AdminNav onNavigate={() => setOpen(false)} />
         {footer}
       </aside>
 
       {/* desktop: fixed sidebar */}
       <aside className="hidden bg-granite p-5 text-snow md:sticky md:top-0 md:flex md:h-screen md:flex-col">
         <div className="mb-8">{logoEl}</div>
-        <AdminNav newCount={newCount} />
+        <AdminNav />
         {footer}
       </aside>
     </>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdminT } from "./AdminI18n";
 import { useChatLive } from "./ChatLive";
+import { useInquiryLive } from "./InquiryLive";
 
 const icon = (d: React.ReactNode) => (
   <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -19,10 +20,11 @@ const ICONS = {
   content: icon(<><path d="M6 3.5h8.5L19 8v12.5H6z" /><path d="M14 3.5V8h5M9 12.5h7M9 16h5" /></>),
 };
 
-export default function AdminNav({ newCount, onNavigate }: { newCount: number; onNavigate?: () => void }) {
+export default function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const path = usePathname();
   const { t } = useAdminT();
   const { unread } = useChatLive();
+  const { newCount } = useInquiryLive();
   const items = [
     { href: "/admin", label: t.nav.overview, exact: true, icon: ICONS.overview },
     { href: "/admin/produkter", label: t.nav.products, icon: ICONS.products },

@@ -46,14 +46,18 @@ export default function OrderForm({
     return submitInquiry(prev, form);
   }, { ok: false });
   const [slug, setSlug] = useState(initialSlug);
-  // products available in any colour: a listed colour can be picked, or any colour typed
+  // products available in any colour: a suggested colour can be picked, or any colour from the colour picker
   const [picked, setPicked] = useState("");
-  const [colorText, setColorText] = useState("");
+  const [custom, setCustom] = useState("");
   const selected = products.find((p) => p.slug === slug);
   const f = state.fields ?? {};
   useEffect(() => {
-    if (state.fields?.colorText) setColorText(state.fields.colorText);
-  }, [state.fields]);
+    // keep the chosen colour after a failed send
+    const c = state.fields?.color;
+    if (!c) return;
+    setPicked(c);
+    if (!products.find((p) => p.slug === state.fields?.productSlug)?.colors.includes(c)) setCustom(c);
+  }, [state.fields, products]);
   const done = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (state.ok) done.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -97,7 +101,7 @@ export default function OrderForm({
             onChange={(v) => {
               setSlug(v);
               setPicked("");
-              setColorText("");
+              setCustom("");
             }}
             options={[
               {
@@ -122,54 +126,46 @@ export default function OrderForm({
       {selected && (selected.allColors || selected.colors.length > 0) && (
         <fieldset key={selected.slug}>
           <legend className="label">{selected.allColors ? d.colorAll : d.color}</legend>
-          {selected.colors.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {selected.colors.map((c, i) => (
-                <label key={c} className="cursor-pointer">
-                  {selected.allColors ? (
-                    <input
-                      type="radio"
-                      name="color"
-                      value={c}
-                      checked={picked === c}
-                      onChange={() => {
-                        setPicked(c);
-                        setColorText("");
-                      }}
-                      className="peer sr-only"
-                    />
-                  ) : (
-                    <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
-                  )}
-                  <span
-                    className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
-                    style={{ background: c }}
-                    title={c}
-                  />
-                  <span className="sr-only">{c}</span>
-                </label>
-              ))}
-            </div>
-          )}
-          {selected.allColors && (
-            <div className={selected.colors.length ? "mt-3" : ""}>
-              <label htmlFor="colorText" className={selected.colors.length ? "hint mb-1 block" : "sr-only"}>
-                {d.colorOther}
+          {selected.allColors && <input type="hidden" name="color" value={picked} />}
+          <div className="flex flex-wrap items-center gap-2">
+            {selected.colors.map((c, i) => (
+              <label key={c} className="cursor-pointer">
+                {selected.allColors ? (
+                  <input type="radio" name="colorSuggestion" value={c} checked={picked === c} onChange={() => setPicked(c)} className="peer sr-only" />
+                ) : (
+                  <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
+                )}
+                <span
+                  className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
+                  style={{ background: c }}
+                  title={c}
+                />
+                <span className="sr-only">{c}</span>
               </label>
-              <input
-                className="field"
-                id="colorText"
-                name="colorText"
-                value={colorText}
-                maxLength={80}
-                placeholder={d.colorPlaceholder}
-                onChange={(e) => {
-                  setColorText(e.target.value);
-                  if (e.target.value) setPicked("");
-                }}
-              />
-            </div>
-          )}
+            ))}
+            {selected.allColors && (
+              <label className="relative cursor-pointer" title={d.colorCustom}>
+                <input
+                  type="color"
+                  value={custom || "#6b8fb5"}
+                  onClick={() => custom && setPicked(custom)}
+                  onChange={(e) => {
+                    setCustom(e.target.value);
+                    setPicked(e.target.value);
+                  }}
+                  className="peer absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  aria-label={d.colorCustom}
+                />
+                <span
+                  className={`grid h-9 w-9 place-items-center rounded-full ring-1 ring-black/10 peer-focus-visible:outline-2 peer-focus-visible:outline-hallon ${custom ? "" : "swatch-all"} ${custom && picked === custom ? "ring-[3px] ring-granite" : ""}`}
+                  style={custom ? { background: custom } : undefined}
+                >
+                  {!custom && <span className="h-3.5 w-3.5 rounded-full bg-paper/90" aria-hidden="true" />}
+                </span>
+              </label>
+            )}
+          </div>
+          {selected.allColors && <p className="hint mt-2">{picked && picked === custom ? d.colorChosen(custom) : d.colorPickHint}</p>}
         </fieldset>
       )}
       <div>

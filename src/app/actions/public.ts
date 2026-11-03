@@ -20,9 +20,7 @@ export async function submitInquiry(_prev: InquiryState, form: FormData): Promis
     phone: get("phone"),
     productSlug: get("productSlug"),
     quantity: get("quantity"),
-    // a colour typed by the customer (products available in any colour) wins over a picked one
-    color: get("colorText").slice(0, 80) || get("color"),
-    colorText: get("colorText"),
+    color: get("color").slice(0, 80),
     message: get("message"),
   };
 

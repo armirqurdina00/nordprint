@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ColorText from "@/components/admin/ColorText";
 import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
@@ -70,7 +71,7 @@ export default async function Dashboard() {
                 <Link href={`/admin/forfragningar/${q.id}`} className="flex items-center gap-4 px-5 py-4 hover:bg-snow">
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{q.name}</p>
-                    <p className="truncate text-fjord">{q.message}</p>
+                    <p className="truncate text-fjord"><ColorText text={q.message} /></p>
                   </div>
                   <StatusPill status={q.status} t={t} />
                   <p className="hidden text-sm text-fjord sm:block">{formatDate(q.createdAt, t.locale)}</p>

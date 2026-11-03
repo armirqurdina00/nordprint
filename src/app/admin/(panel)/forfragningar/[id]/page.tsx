@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ColorText from "@/components/admin/ColorText";
 import { notFound } from "next/navigation";
 import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
@@ -43,7 +44,7 @@ export default async function InquiryPage({ params }: { params: Promise<{ id: st
               <div><dt className="hint">{t.inquiry.phone}</dt><dd className="font-medium">{q.phone ? <a className="underline" href={`tel:${q.phone}`}>{q.phone}</a> : t.inquiry.notGiven}</dd></div>
             </dl>
             <h2 className="hint mt-6">{t.inquiry.message}</h2>
-            <p className="mt-1 whitespace-pre-wrap">{q.message}</p>
+            <p className="mt-1 whitespace-pre-wrap"><ColorText text={q.message} /></p>
           </section>
           {q.files.length > 0 && (
             <section className="rounded-2xl bg-paper p-6 ring-1 ring-mist">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ColorText from "@/components/admin/ColorText";
 import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
@@ -49,7 +50,7 @@ export default async function Inquiries({ searchParams }: { searchParams: Promis
                   <p className="font-semibold">
                     {q.name} <span className="font-normal text-fjord">{t.inquiries.about(productName(q.productSlug))}{q.quantity && q.quantity !== "1" ? `, ${t.inquiries.pieces(q.quantity)}` : ""}</span>
                   </p>
-                  <p className="truncate text-fjord">{q.message}</p>
+                  <p className="truncate text-fjord"><ColorText text={q.message} /></p>
                 </div>
                 <div className="flex items-center gap-4">
                   {q.lang === "en" && <span className="rounded-full bg-snow px-2 py-0.5 text-xs font-semibold ring-1 ring-mist" title={t.inquiries.fromEnglish}>EN</span>}

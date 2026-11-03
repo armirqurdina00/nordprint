@@ -19,9 +19,11 @@ let seeding: Promise<void> | null = null;
  */
 const redisUrl = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
 const redisToken = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
-const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
+/** Connection settings, shared with the chat store (which uses its own client without automatic JSON parsing). */
+export const redisEnv = redisUrl && redisToken ? { url: redisUrl, token: redisToken } : null;
+const redis = redisEnv ? new Redis(redisEnv) : null;
 const KEY = "nordprint:content";
-const READ_ONLY = !redis && !!process.env.VERCEL;
+export const READ_ONLY = !redis && !!process.env.VERCEL;
 
 export const storageMode = redis ? "redis" : READ_ONLY ? "read-only" : "file";
 

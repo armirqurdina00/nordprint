@@ -79,3 +79,36 @@ export type Content = {
   products: Product[];
   inquiries: Inquiry[];
 };
+
+export type ChatFrom = "visitor" | "admin";
+
+/** One chat message. `id` is its position in the conversation, so clients can ask for "everything after n". */
+export type ChatMessage = {
+  id: number;
+  at: string;
+  from: ChatFrom;
+  text: string;
+  files: string[];
+};
+
+export type ChatStatus = "open" | "closed";
+
+export type Conversation = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  lang: Lang;
+  name: string;
+  email: string;
+  /** the page the visitor was on when they started the chat */
+  page: string;
+  status: ChatStatus;
+  preview: string;
+  lastFrom: ChatFrom | "";
+  /** messages from the visitor the admin has not opened yet */
+  unreadAdmin: number;
+  /** messages from the studio the visitor has not seen yet */
+  unreadVisitor: number;
+  adminSeenAt: string;
+  visitorSeenAt: string;
+};

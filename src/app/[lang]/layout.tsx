@@ -6,6 +6,9 @@ import { getSettings } from "@/lib/db";
 import { isLang, t } from "@/lib/i18n";
 import { settingsText } from "@/lib/localize";
 import type { Lang } from "@/lib/types";
+import ChatWidget from "@/components/site/ChatWidget";
+import { chatEnabled } from "@/lib/chat";
+import { blobMode } from "@/lib/uploads";
 
 type Props = { children: React.ReactNode; params: Promise<{ lang: string }> };
 
@@ -33,6 +36,7 @@ export default async function SiteLayout({ children, params }: Props) {
       <Header lang={lang} announcement={text.announcement} logo={settings.logo} instagram={settings.instagram} />
       <main id="main">{children}</main>
       <Footer lang={lang} settings={settings} />
+      {chatEnabled && <ChatWidget lang={lang as Lang} direct={blobMode} />}
     </>
   );
 }

@@ -7,11 +7,13 @@ import { logout } from "@/app/admin/actions";
 import Logo from "@/components/site/Logo";
 import AdminNav from "./AdminNav";
 import { AdminLangSwitch, useAdminT } from "./AdminI18n";
+import { useChatLive } from "./ChatLive";
 
 /** Admin sidebar: fixed on desktop, a slide-in drawer behind a top bar on small screens. */
 export default function AdminChrome({ newCount, logo }: { newCount: number; logo: string }) {
   const [open, setOpen] = useState(false);
   const { t } = useAdminT();
+  const { unread } = useChatLive();
   const pathname = usePathname();
   const burger = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -83,7 +85,12 @@ export default function AdminChrome({ newCount, logo }: { newCount: number; logo
             <span className="h-[2px] w-5 rounded-full bg-current" />
             <span className="h-[2px] w-3.5 rounded-full bg-current" />
           </span>
-          {newCount > 0 && <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-hallon ring-2 ring-granite" aria-label={t.nav.newInquiries(newCount)} />}
+          {newCount + unread > 0 && (
+            <span
+              className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-hallon ring-2 ring-granite"
+              aria-label={[newCount && t.nav.newInquiries(newCount), unread && t.nav.unreadChats(unread)].filter(Boolean).join(", ")}
+            />
+          )}
         </button>
       </div>
 

@@ -1,6 +1,6 @@
 /** Upload rules shared by the browser (pre-checks, direct uploads) and the server (validation). */
 
-export type UploadKind = "products" | "inquiries" | "site";
+export type UploadKind = "products" | "inquiries" | "site" | "chat";
 
 /**
  * How the browser uploads to Vercel Blob:
@@ -31,9 +31,15 @@ export const RULES: Record<UploadKind, { types: Record<string, string>; maxMb: n
   products: { types: IMAGE, maxMb: 10 },
   inquiries: { types: { ...IMAGE, ...MODEL }, maxMb: 20 },
   site: { types: { ...IMAGE, ".svg": "image/svg+xml" }, maxMb: 2 },
+  chat: { types: { ...IMAGE, ...MODEL }, maxMb: 20 },
 };
 
+/** Kinds anyone may upload (rate limited); the rest need an admin session. */
+export const PUBLIC_KINDS: UploadKind[] = ["inquiries", "chat"];
+
 export const MAX_INQUIRY_FILES = 5;
+export const MAX_CHAT_FILES = 4;
+export const MAX_CHAT_TEXT = 2000;
 
 export class UploadError extends Error {
   constructor(public kind: "type" | "size" | "failed" | "storage", public detail: string, public mb = 0) {

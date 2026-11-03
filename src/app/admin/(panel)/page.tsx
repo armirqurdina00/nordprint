@@ -3,9 +3,10 @@ import { getContent } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import StatusPill from "@/components/admin/StatusPill";
 import { getAdminT } from "@/lib/admin-lang";
+import { chatSummary } from "@/lib/chat";
 
 export default async function Dashboard() {
-  const [{ products, inquiries }, t] = await Promise.all([getContent(), getAdminT()]);
+  const [{ products, inquiries }, t, chat] = await Promise.all([getContent(), getAdminT(), chatSummary()]);
   const stats = [
     { label: t.dashboard.statNew, value: inquiries.filter((i) => i.status === "ny").length, href: "/admin/forfragningar?status=ny" },
     { label: t.dashboard.statOngoing, value: inquiries.filter((i) => i.status === "pågår").length, href: "/admin/forfragningar?status=pågår" },
@@ -29,6 +30,13 @@ export default async function Dashboard() {
           </Link>
         ))}
       </div>
+
+      {chat.unread > 0 && (
+        <Link href="/admin/chatt" className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-granite p-5 text-snow hover:bg-granite/90">
+          <p className="font-semibold">{t.chat.unreadBanner(chat.unread)}</p>
+          <span className="btn btn-primary px-4 py-2.5 text-sm">{t.chat.openChat}</span>
+        </Link>
+      )}
 
       {missingPhotos.length > 0 && (
         <div className="mt-6 rounded-2xl bg-hallon-soft p-5">

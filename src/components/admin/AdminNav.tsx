@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdminT } from "./AdminI18n";
+import { useChatLive } from "./ChatLive";
 
 const icon = (d: React.ReactNode) => (
   <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -14,16 +15,19 @@ const ICONS = {
   overview: icon(<><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" /></>),
   products: icon(<><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z" /><path d="M4 7.5 12 12l8-4.5M12 12v9" /></>),
   inquiries: icon(<><path d="M4 13.5 6.5 5h11l2.5 8.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /><path d="M4 13.5h4.5l1.5 2.5h4l1.5-2.5H20" /></>),
+  chat: icon(<><path d="M20 11.5c0 4.14-3.58 7.5-8 7.5-1.2 0-2.34-.25-3.36-.7L4 19.5l1.2-3.6A7.1 7.1 0 0 1 4 11.5C4 7.36 7.58 4 12 4s8 3.36 8 7.5Z" /></>),
   content: icon(<><path d="M6 3.5h8.5L19 8v12.5H6z" /><path d="M14 3.5V8h5M9 12.5h7M9 16h5" /></>),
 };
 
 export default function AdminNav({ newCount, onNavigate }: { newCount: number; onNavigate?: () => void }) {
   const path = usePathname();
   const { t } = useAdminT();
+  const { unread } = useChatLive();
   const items = [
     { href: "/admin", label: t.nav.overview, exact: true, icon: ICONS.overview },
     { href: "/admin/produkter", label: t.nav.products, icon: ICONS.products },
-    { href: "/admin/forfragningar", label: t.nav.inquiries, badge: newCount, icon: ICONS.inquiries },
+    { href: "/admin/chatt", label: t.nav.chat, badge: unread, badgeLabel: t.nav.unreadChats(unread), icon: ICONS.chat },
+    { href: "/admin/forfragningar", label: t.nav.inquiries, badge: newCount, badgeLabel: t.nav.newBadge(newCount), icon: ICONS.inquiries },
     { href: "/admin/innehall", label: t.nav.content, icon: ICONS.content },
   ];
   return (
@@ -43,7 +47,7 @@ export default function AdminNav({ newCount, onNavigate }: { newCount: number; o
             {it.icon}
             <span className="flex-1">{it.label}</span>
             {it.badge ? (
-              <span className="rounded-full bg-hallon px-2 text-sm tabular-nums text-white" aria-label={t.nav.newBadge(it.badge)}>
+              <span className="rounded-full bg-hallon px-2 text-sm tabular-nums text-white" aria-label={it.badgeLabel}>
                 {it.badge}
               </span>
             ) : null}

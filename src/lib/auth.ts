@@ -22,6 +22,20 @@ function safeEqual(a: string, b: string) {
   return ab.length === bb.length && timingSafeEqual(ab, bb);
 }
 
+/** `value.signature`, for cookies that must not be forged (e.g. the visitor's chat id). */
+export function signValue(value: string) {
+  return `${value}.${sign(value)}`;
+}
+
+/** Returns the value of a string made by signValue, or null if the signature does not match. */
+export function verifySigned(signed: string | undefined) {
+  if (!signed) return null;
+  const i = signed.lastIndexOf(".");
+  if (i <= 0) return null;
+  const value = signed.slice(0, i);
+  return safeEqual(signed.slice(i + 1), sign(value)) ? value : null;
+}
+
 export function checkPassword(input: string) {
   const pw = process.env.ADMIN_PASSWORD;
   if (!pw) throw new Error("ADMIN_PASSWORD saknas i miljövariablerna.");

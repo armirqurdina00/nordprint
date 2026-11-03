@@ -32,6 +32,7 @@ Produktbilderna i `public/images/products/` är skärmdumpar av inläggen på In
 
 - **Översikt**: nya och pågående förfrågningar, produkter som saknar foto
 - **Produkter**: skapa, redigera, radera, sortera, publicera och dölja. Svensk och engelsk text i flikar, bilduppladdning, färger, kategori, pris eller pris på förfrågan
+- **Chatt**: svara besökare som skriver i chatten på webbplatsen. Olästa meddelanden syns som en siffra i menyn och i webbläsarfliken, och nya meddelanden dyker upp av sig själva. Chattar kan avslutas (flyttas till Avslutade, öppnas igen om kunden skriver) eller raderas. Har kunden lämnat e-post kan du också svara via mejl
 - **Förfrågningar**: inkorg för beställningar (märkta EN om de skickats från den engelska sidan) med status (ny, pågår, klar, arkiverad), egna anteckningar, bifogade filer och svar via e-post
 - **Sidinnehåll**: logotyp, alla texter på webbplatsen på båda språken, tjänster, steg, vanliga frågor, köpvillkor och kontaktuppgifter
 
@@ -40,9 +41,10 @@ Produktbilderna i `public/images/products/` är skärmdumpar av inläggen på In
 | | Lokalt | På Vercel |
 | --- | --- | --- |
 | Innehåll (texter, produkter, förfrågningar) | `data/content.json` | Upstash Redis |
+| Chattar | `data/chats.json` | Upstash Redis (egna nycklar, `nordprint:chat*`) |
 | Uppladdade filer | `data/uploads/` | Vercel Blob |
 
-Vilket som används avgörs av miljövariablerna. Första gången fylls lagringen med innehållet i `data/seed.json`.
+Vilket som används avgörs av miljövariablerna. Utan Redis på Vercel är chatten avstängd och syns inte på webbplatsen. Första gången fylls lagringen med innehållet i `data/seed.json`.
 
 På Vercel laddar webbläsaren upp filer direkt till Vercel Blob (via `/api/upload`), så kunder kan skicka 3D-filer upp till 20 MB trots Vercels gräns på 4,5 MB per anrop. Kundernas filer får slumpmässiga adresser som inte går att gissa, men den som har länken kan öppna filen.
 

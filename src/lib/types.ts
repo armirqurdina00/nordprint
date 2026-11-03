@@ -20,6 +20,8 @@ export type Product = {
   price: number | null;
   images: string[];
   colors: string[];
+  /** can be printed in any colour; `colors` are then suggestions */
+  allColors: boolean;
   instagram: string;
   featured: boolean;
   published: boolean;

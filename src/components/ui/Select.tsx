@@ -7,7 +7,7 @@ export type SelectOption = {
   label: string;
   hint?: string;
   image?: string;
-  /** small colour dots shown after the label (e.g. product colours) */
+  /** small colour dots shown after the label (e.g. product colours); "*" is the any-colour swatch */
   swatches?: string[];
   /** a single status dot shown before the label */
   dot?: string;
@@ -211,7 +211,7 @@ export default function Select({
                     {o.swatches && o.swatches.length > 0 && (
                       <span className="flex gap-1" aria-hidden>
                         {o.swatches.slice(0, 6).map((c) => (
-                          <span key={c} className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10" style={{ background: c }} />
+                          <span key={c} className={`h-2.5 w-2.5 rounded-full ring-1 ring-black/10 ${c === "*" ? "swatch-all" : ""}`} style={c === "*" ? undefined : { background: c }} />
                         ))}
                       </span>
                     )}

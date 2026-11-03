@@ -76,14 +76,20 @@ export default async function ProductPage({ params }: Props) {
             {product.price === null ? d.onRequest : formatPrice(product.price, lang)}
             {product.price !== null && product.priceNote && <span className="ml-2 text-base font-normal text-fjord">{product.priceNote}</span>}
           </p>
-          {product.colors.length > 0 && (
+          {(product.allColors || product.colors.length > 0) && (
             <div className="mt-6">
-              <p className="font-semibold">{d.availableIn(product.colors.length)}</p>
-              <ul className="mt-2 flex gap-2">
+              <p className="font-semibold">{product.allColors ? d.availableAll : d.availableIn(product.colors.length)}</p>
+              <ul className="mt-2 flex flex-wrap gap-2">
+                {product.allColors && (
+                  <li className="swatch-all h-8 w-8 rounded-full ring-1 ring-black/10" title={d.anyColor}>
+                    <span className="sr-only">{d.anyColor}</span>
+                  </li>
+                )}
                 {product.colors.map((c) => (
                   <li key={c} className="h-8 w-8 rounded-full ring-1 ring-black/10" style={{ background: c }} title={c} />
                 ))}
               </ul>
+              {product.allColors && <p className="hint mt-2">{d.allColorsNote(product.colors.length)}</p>}
             </div>
           )}
           <div className="mt-8 grid gap-3 sm:grid-cols-2">

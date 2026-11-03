@@ -10,7 +10,7 @@ import Select from "@/components/ui/Select";
 import FilePicker, { FileTiles, usePreviews } from "./FilePicker";
 import type { Lang } from "@/lib/types";
 
-type Option = { slug: string; name: string; colors: string[]; image?: string; category?: string };
+type Option = { slug: string; name: string; colors: string[]; allColors?: boolean; image?: string; category?: string };
 
 export default function OrderForm({
   lang,
@@ -46,8 +46,14 @@ export default function OrderForm({
     return submitInquiry(prev, form);
   }, { ok: false });
   const [slug, setSlug] = useState(initialSlug);
+  // products available in any colour: a listed colour can be picked, or any colour typed
+  const [picked, setPicked] = useState("");
+  const [colorText, setColorText] = useState("");
   const selected = products.find((p) => p.slug === slug);
   const f = state.fields ?? {};
+  useEffect(() => {
+    if (state.fields?.colorText) setColorText(state.fields.colorText);
+  }, [state.fields]);
   const done = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (state.ok) done.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -88,7 +94,11 @@ export default function OrderForm({
             id="productSlug"
             name="productSlug"
             value={slug}
-            onChange={setSlug}
+            onChange={(v) => {
+              setSlug(v);
+              setPicked("");
+              setColorText("");
+            }}
             options={[
               {
                 value: "",
@@ -100,7 +110,7 @@ export default function OrderForm({
                   </svg>
                 ),
               },
-              ...products.map((p) => ({ value: p.slug, label: p.name, hint: p.category, image: p.image, swatches: p.colors })),
+              ...products.map((p) => ({ value: p.slug, label: p.name, hint: p.category, image: p.image, swatches: p.allColors ? ["*", ...p.colors] : p.colors })),
             ]}
           />
         </div>
@@ -109,22 +119,57 @@ export default function OrderForm({
           <input className="field" id="quantity" name="quantity" inputMode="numeric" defaultValue={f.quantity ?? "1"} />
         </div>
       </div>
-      {selected && selected.colors.length > 0 && (
-        <fieldset>
-          <legend className="label">{d.color}</legend>
-          <div className="flex flex-wrap gap-2">
-            {selected.colors.map((c, i) => (
-              <label key={c} className="cursor-pointer">
-                <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
-                <span
-                  className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
-                  style={{ background: c }}
-                  title={c}
-                />
-                <span className="sr-only">{c}</span>
+      {selected && (selected.allColors || selected.colors.length > 0) && (
+        <fieldset key={selected.slug}>
+          <legend className="label">{selected.allColors ? d.colorAll : d.color}</legend>
+          {selected.colors.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {selected.colors.map((c, i) => (
+                <label key={c} className="cursor-pointer">
+                  {selected.allColors ? (
+                    <input
+                      type="radio"
+                      name="color"
+                      value={c}
+                      checked={picked === c}
+                      onChange={() => {
+                        setPicked(c);
+                        setColorText("");
+                      }}
+                      className="peer sr-only"
+                    />
+                  ) : (
+                    <input type="radio" name="color" value={c} defaultChecked={i === 0} className="peer sr-only" />
+                  )}
+                  <span
+                    className="block h-9 w-9 rounded-full ring-1 ring-black/10 peer-checked:ring-[3px] peer-checked:ring-granite peer-focus-visible:outline-2 peer-focus-visible:outline-hallon"
+                    style={{ background: c }}
+                    title={c}
+                  />
+                  <span className="sr-only">{c}</span>
+                </label>
+              ))}
+            </div>
+          )}
+          {selected.allColors && (
+            <div className={selected.colors.length ? "mt-3" : ""}>
+              <label htmlFor="colorText" className={selected.colors.length ? "hint mb-1 block" : "sr-only"}>
+                {d.colorOther}
               </label>
-            ))}
-          </div>
+              <input
+                className="field"
+                id="colorText"
+                name="colorText"
+                value={colorText}
+                maxLength={80}
+                placeholder={d.colorPlaceholder}
+                onChange={(e) => {
+                  setColorText(e.target.value);
+                  if (e.target.value) setPicked("");
+                }}
+              />
+            </div>
+          )}
         </fieldset>
       )}
       <div>

@@ -22,9 +22,10 @@ export default function ProductCard({ product, lang, large = false }: { product:
           {product.price === null ? d.products.onRequest : formatPrice(product.price, lang)}
           {product.price !== null && product.priceNote && <span className="ml-1.5 text-sm font-normal text-fjord">{product.priceNote}</span>}
         </p>
-        {product.colors.length > 0 && (
-          <ul className="flex gap-1.5" aria-label={d.products.colors}>
-            {product.colors.map((c) => (
+        {(product.allColors || product.colors.length > 0) && (
+          <ul className="flex gap-1.5" aria-label={product.allColors ? d.products.availableAll : d.products.colors}>
+            {product.allColors && <li className="swatch-all h-3.5 w-3.5 rounded-full ring-1 ring-black/10" title={d.products.anyColor} />}
+            {product.colors.slice(0, product.allColors ? 4 : undefined).map((c) => (
               <li key={c} className="h-3.5 w-3.5 rounded-full ring-1 ring-black/10" style={{ background: c }} />
             ))}
           </ul>

@@ -81,6 +81,7 @@ export async function saveProduct(_prev: FormState, form: FormData): Promise<For
       price,
       images,
       colors,
+      allColors: form.get("allColors") === "on",
       instagram: str(form, "instagram"),
       featured: form.get("featured") === "on",
       published: form.get("published") === "on",

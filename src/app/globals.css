@@ -83,6 +83,9 @@
 .label { display: block; font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.35rem; }
 .hint { font-size: 0.875rem; color: var(--color-fjord); }
 
+/* "any colour" swatch */
+.swatch-all { background: conic-gradient(from 200deg, #d8285a, #f28c28, #f4c542, #3bb273, #2d9cdb, #6b4fd0, #d8285a); }
+
 .prose-np p + p { margin-top: 1em; }
 
 @media (prefers-reduced-motion: reduce) {

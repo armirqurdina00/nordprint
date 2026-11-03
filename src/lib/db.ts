@@ -61,11 +61,11 @@ function normalize(data: Record<string, any>): Content {
   data.settings.logo ??= "";
   data.settings.en ??= { ...EMPTY_SETTINGS_TEXT };
   data.products = (data.products ?? []).map((p: any): Product => {
-    if (p.sv) return { instagram: "", ...p, en: { ...EMPTY_PRODUCT_TEXT, ...p.en } };
+    if (p.sv) return { instagram: "", ...p, allColors: !!p.allColors, en: { ...EMPTY_PRODUCT_TEXT, ...p.en } };
     const sv = { ...EMPTY_PRODUCT_TEXT };
     for (const k of Object.keys(sv) as (keyof ProductText)[]) if (k in p) sv[k] = p[k];
     return {
-      id: p.id, slug: p.slug, price: p.price ?? null, images: p.images ?? [], colors: p.colors ?? [], instagram: p.instagram ?? "",
+      id: p.id, slug: p.slug, price: p.price ?? null, images: p.images ?? [], colors: p.colors ?? [], allColors: false, instagram: p.instagram ?? "",
       featured: !!p.featured, published: !!p.published, order: p.order ?? 0, createdAt: p.createdAt, updatedAt: p.updatedAt,
       sv, en: { ...EMPTY_PRODUCT_TEXT },
     };

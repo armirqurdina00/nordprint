@@ -31,6 +31,7 @@ export default function ProductForm({ product, categories, direct = null }: { pr
   const [svName, setSvName] = useState(product?.sv.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [colors, setColors] = useState((product?.colors ?? []).join(", "));
+  const [allColors, setAllColors] = useState(product?.allColors ?? false);
   const parsedColors = colors.split(/[\s,]+/).filter((c) => /^#[0-9a-f]{3,8}$/i.test(c));
   const text = (l: Lang) => product?.[l] ?? EMPTY;
 
@@ -134,6 +135,17 @@ export default function ProductForm({ product, categories, direct = null }: { pr
                 <input type="color" className="absolute inset-0 cursor-pointer opacity-0" onChange={(e) => setColors((c) => (c.trim() ? `${c}, ${e.target.value}` : e.target.value))} />
               </label>
             </div>
+            {!allColors && parsedColors.length === 0 && <p className="hint mt-2">{t.product.colorsHint}</p>}
+            <label className="mt-4 flex items-start justify-between gap-4 rounded-xl bg-snow p-3 ring-1 ring-mist">
+              <span>
+                <span className="flex items-center gap-2 font-semibold">
+                  <span aria-hidden className="swatch-all h-4 w-4 rounded-full ring-1 ring-black/10" />
+                  {t.product.allColors}
+                </span>
+                <span className="hint mt-0.5 block">{t.product.allColorsHint}</span>
+              </span>
+              <input type="checkbox" name="allColors" checked={allColors} onChange={(e) => setAllColors(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-hallon" />
+            </label>
           </div>
           <div>
             <label className="label" htmlFor="instagram">{t.product.instagram} <span className="font-normal text-fjord">{t.common.optional}</span></label>

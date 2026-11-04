@@ -9,6 +9,7 @@ import type { Lang } from "@/lib/types";
 import ChatWidget from "@/components/site/ChatWidget";
 import { chatEnabled } from "@/lib/chat";
 import { blobMode } from "@/lib/uploads";
+import ScrollReveal from "@/components/site/ScrollReveal";
 
 type Props = { children: React.ReactNode; params: Promise<{ lang: string }> };
 
@@ -36,6 +37,7 @@ export default async function SiteLayout({ children, params }: Props) {
       <Header lang={lang} announcement={text.announcement} logo={settings.logo} instagram={settings.instagram} />
       <main id="main">{children}</main>
       <Footer lang={lang} settings={settings} />
+      <ScrollReveal />
       {chatEnabled && <ChatWidget lang={lang as Lang} direct={blobMode} />}
     </>
   );

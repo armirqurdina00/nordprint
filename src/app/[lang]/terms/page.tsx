@@ -18,7 +18,7 @@ export default async function Terms({ params }: Props) {
   const text = settingsText(settings, lang);
   return (
     <div className="mx-auto max-w-3xl px-5 pt-12">
-      <h1 className="text-4xl font-semibold sm:text-5xl">{d.title}</h1>
+      <h1 className="rise text-4xl font-semibold sm:text-5xl">{d.title}</h1>
       <p className="mt-4 text-lg text-fjord">{d.intro(settings.brandName)}</p>
       <div className="mt-10 space-y-10">
         {text.policies.map((p) => (

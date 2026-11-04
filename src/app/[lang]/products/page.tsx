@@ -28,9 +28,9 @@ export default async function Products({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-5 pt-12">
-      <h1 className="text-4xl font-semibold sm:text-5xl">{d.title}</h1>
-      <p className="mt-3 max-w-xl text-lg text-fjord">{d.intro}</p>
-      <nav className="mt-8 flex flex-wrap gap-2" aria-label={d.categories}>
+      <h1 className="rise text-4xl font-semibold sm:text-5xl">{d.title}</h1>
+      <p className="rise mt-3 max-w-xl text-lg text-fjord" style={{ "--d": 1 } as React.CSSProperties}>{d.intro}</p>
+      <nav className="rise mt-8 flex flex-wrap gap-2" style={{ "--d": 2 } as React.CSSProperties} aria-label={d.categories}>
         <Link href={base} className={chip(!category)} aria-current={!category ? "page" : undefined}>{d.all}</Link>
         {categories.map((c) => (
           <Link key={c} href={`${base}?${CATEGORY_PARAM[lang]}=${encodeURIComponent(c)}`} className={chip(category === c)} aria-current={category === c ? "page" : undefined}>
@@ -44,7 +44,7 @@ export default async function Products({ params, searchParams }: Props) {
         </p>
       ) : (
         <div className="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => <ProductCard key={p.id} product={p} lang={lang} />)}
+          {products.map((p, i) => <ProductCard key={p.id} product={p} lang={lang} reveal={i % 3} />)}
         </div>
       )}
     </div>

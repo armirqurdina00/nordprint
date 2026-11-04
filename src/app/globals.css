@@ -63,6 +63,8 @@
   transition: background-color 150ms, color 150ms, transform 150ms;
 }
 .btn:active { transform: translateY(1px); }
+/* icons are taller than the text line: keep them from making a button taller than its neighbours */
+.btn > svg { margin-block: -0.25rem; }
 .btn-primary { background: var(--color-hallon); color: white; }
 .btn-primary:hover { background: var(--color-hallon-dark); }
 .btn-ghost { box-shadow: inset 0 0 0 1.5px var(--color-granite); }
@@ -88,6 +90,58 @@
 
 .prose-np p + p { margin-top: 1em; }
 
+/* ---------- motion ---------- */
+:root { --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1); interpolate-size: allow-keywords; }
+
+@keyframes np-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes np-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes np-pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: none; opacity: 1; } }
+
+/* every page fades in on navigation (see [lang]/template.tsx) */
+.page-enter { animation: np-fade 420ms ease-out both; }
+
+/* entrance on page load, above the fold; --d is the step in the stagger */
+.rise { animation: np-rise 800ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 90ms + 60ms); }
+.fade-in { animation: np-fade 1000ms ease-out both; animation-delay: calc(var(--d, 0) * 90ms + 60ms); }
+
+/* revealed when scrolled into view (ScrollReveal); --i staggers siblings. Only hidden when JS runs. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+html.js [data-reveal].is-in { opacity: 1; transform: none; }
+/* safety net: if the observer never starts (script error), show everything after 3 s */
+html.js:not(.reveal-ready) [data-reveal] { animation: np-unhide 0s 3s forwards; }
+@keyframes np-unhide { to { opacity: 1; transform: none; } }
+
+/* dashed connector between process steps draws itself */
+html.js [data-reveal] .draw-x { transform: scaleX(0); transform-origin: left; transition: transform 900ms var(--ease-out) 350ms; }
+html.js [data-reveal].is-in .draw-x { transform: none; }
+html.js [data-reveal].is-in .pop { animation: np-pop 600ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 90ms + 150ms); }
+
+/* product cards lift a little on hover */
+.card-lift { transition: transform 400ms var(--ease-out), box-shadow 400ms var(--ease-out); }
+.group:hover .card-lift { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgb(30 43 48 / 0.45); }
+
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -12px rgb(216 40 90 / 0.65); }
+.btn-primary:active { transform: translateY(1px); box-shadow: none; }
+
+/* header gets a soft shadow once the page scrolls (no JS; browsers without scroll timelines keep it flat) */
+@supports (animation-timeline: scroll()) {
+  .header-bar { animation: np-header linear both; animation-timeline: scroll(); animation-range: 0 140px; }
+  @keyframes np-header { to { box-shadow: 0 8px 28px -18px rgb(30 43 48 / 0.35); background-color: rgb(238 242 243 / 0.95); } }
+}
+
+/* FAQ answers open smoothly where the browser supports animating <details> */
+details.faq::details-content { block-size: 0; overflow: hidden; transition: block-size 350ms var(--ease-out), content-visibility 350ms allow-discrete; }
+details.faq[open]::details-content { block-size: auto; }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important; animation-duration: 0.01ms !important;
+    transition-delay: 0s !important; animation-delay: 0s !important;
+  }
+  .header-bar { animation: none !important; }
 }

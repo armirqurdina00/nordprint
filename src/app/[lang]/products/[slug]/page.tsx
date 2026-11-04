@@ -56,7 +56,7 @@ export default async function ProductPage({ params }: Props) {
       </nav>
       <div className="mt-6 grid gap-10 md:grid-cols-[1.15fr_1fr]">
         <div className="grid gap-4">
-          <div className="aspect-[4/5] overflow-hidden rounded-[22px] bg-mist">
+          <div className="fade-in aspect-[4/5] overflow-hidden rounded-[22px] bg-mist">
             <ProductImage product={product} sizes="lg" soonLabel={d.imageSoon} />
           </div>
           {extra.length > 0 && (
@@ -70,9 +70,9 @@ export default async function ProductPage({ params }: Props) {
           )}
         </div>
         <div className="md:sticky md:top-28 md:self-start">
-          <h1 className="text-4xl font-semibold sm:text-5xl">{product.name}</h1>
-          <p className="mt-3 text-xl text-fjord">{product.tagline}</p>
-          <p className="mt-6 text-2xl font-semibold tabular-nums">
+          <h1 className="rise text-4xl font-semibold sm:text-5xl">{product.name}</h1>
+          <p className="rise mt-3 text-xl text-fjord" style={{ "--d": 1 } as React.CSSProperties}>{product.tagline}</p>
+          <p className="rise mt-6 text-2xl font-semibold tabular-nums" style={{ "--d": 2 } as React.CSSProperties}>
             {product.price === null ? d.onRequest : formatPrice(product.price, lang)}
             {product.price !== null && product.priceNote && <span className="ml-2 text-base font-normal text-fjord">{product.priceNote}</span>}
           </p>
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: Props) {
               {product.allColors && <p className="hint mt-2">{d.allColorsNote(product.colors.length)}</p>}
             </div>
           )}
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="rise mt-8 grid gap-3 sm:grid-cols-2" style={{ "--d": 3 } as React.CSSProperties}>
             <Link href={`${href(lang, "order")}?${PRODUCT_PARAM[lang]}=${product.slug}`} className="btn btn-primary w-full sm:col-span-2">
               {d.orderThis(shortName)}
             </Link>
@@ -136,9 +136,9 @@ export default async function ProductPage({ params }: Props) {
       </div>
       {related.length > 0 && (
         <section className="mt-24" aria-labelledby="related">
-          <h2 id="related" className="text-2xl font-semibold sm:text-3xl">{d.moreIn(product.category)}</h2>
+          <h2 id="related" className="text-2xl font-semibold sm:text-3xl" data-reveal>{d.moreIn(product.category)}</h2>
           <div className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((p) => <ProductCard key={p.id} product={p} lang={lang} />)}
+            {related.map((p, i) => <ProductCard key={p.id} product={p} lang={lang} reveal={i % 3} />)}
           </div>
         </section>
       )}

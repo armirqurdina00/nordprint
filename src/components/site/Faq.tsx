@@ -2,9 +2,9 @@ import type { FaqItem } from "@/lib/types";
 
 export default function Faq({ items }: { items: FaqItem[] }) {
   return (
-    <div className="mt-8 divide-y divide-mist border-y border-mist">
+    <div className="mt-8 divide-y divide-mist border-y border-mist" data-reveal>
       {items.map((item) => (
-        <details key={item.q} className="group py-1">
+        <details key={item.q} className="faq group py-1">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
             {item.q}
             <span aria-hidden className="relative h-4 w-4 shrink-0">

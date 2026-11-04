@@ -27,7 +27,7 @@ export default async function Order({ params, searchParams }: Props) {
   return (
     <div className="mx-auto grid max-w-6xl gap-8 px-5 pt-8 sm:pt-12 md:grid-cols-[1fr_1.5fr] md:grid-rows-[auto_1fr] md:gap-x-12 md:gap-y-10">
       <header className="md:col-start-1 md:row-start-1">
-        <h1 className="text-4xl font-semibold sm:text-5xl">{d.title}</h1>
+        <h1 className="rise text-4xl font-semibold sm:text-5xl">{d.title}</h1>
         <p className="mt-3 max-w-md text-lg text-fjord sm:mt-4">{d.intro}</p>
       </header>
 

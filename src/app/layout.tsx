@@ -11,7 +11,11 @@ export const dynamic = "force-dynamic";
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = (await headers()).get("x-lang") === "en" ? "en" : "sv";
   return (
-    <html lang={lang} className={`${unbounded.variable} ${instrument.variable} ${montserrat.variable}`}>
+    <html lang={lang} className={`${unbounded.variable} ${instrument.variable} ${montserrat.variable}`} suppressHydrationWarning>
+      <head>
+        {/* lets CSS hide scroll-reveal content only when JS can reveal it again */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>{children}</body>
     </html>
   );

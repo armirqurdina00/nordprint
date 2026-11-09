@@ -1,7 +1,9 @@
+import { after } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { addMessage, deleteConversation, getConversation, getMessages, markSeen, updateConversation } from "@/lib/chat";
 import { json, sameOrigin } from "@/lib/chat-session";
 import { readMessage } from "@/lib/chat-input";
+import { clearChatSubscriptions, markActive, notifyNewMessage } from "@/lib/push";
 import { deleteUpload } from "@/lib/uploads";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -20,9 +22,12 @@ export async function GET(req: Request, ctx: Ctx) {
   if (res) return res;
   const url = new URL(req.url);
   const messages = await getMessages(conversation.id, Number(url.searchParams.get("after")) || 0);
-  if (url.searchParams.get("seen") === "1" && conversation.unreadAdmin > 0) {
-    await markSeen(conversation.id, "admin");
-    conversation.unreadAdmin = 0;
+  if (url.searchParams.get("seen") === "1") {
+    await markActive(conversation.id, "admin");
+    if (conversation.unreadAdmin > 0) {
+      await markSeen(conversation.id, "admin");
+      conversation.unreadAdmin = 0;
+    }
   }
   return json({ conversation, messages });
 }
@@ -36,6 +41,7 @@ export async function POST(req: Request, ctx: Ctx) {
   const message = await addMessage(conversation.id, "admin", input.text, input.files);
   // replying means the admin has read everything before it
   if (conversation.unreadAdmin > 0) await markSeen(conversation.id, "admin");
+  after(() => notifyNewMessage(conversation, message));
   return json({ message });
 }
 
@@ -53,6 +59,6 @@ export async function DELETE(req: Request, ctx: Ctx) {
   const { res, conversation } = await load(req, ctx, true);
   if (res) return res;
   const files = await deleteConversation(conversation.id);
-  await Promise.all(files.map(deleteUpload));
+  await Promise.all([...files.map(deleteUpload), clearChatSubscriptions(conversation.id)]);
   return json({ ok: true });
 }

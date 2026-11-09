@@ -8,6 +8,7 @@ import { settingsText } from "@/lib/localize";
 import type { Lang } from "@/lib/types";
 import ChatWidget from "@/components/site/ChatWidget";
 import { chatEnabled } from "@/lib/chat";
+import { pushPublicKey } from "@/lib/push";
 import { blobMode } from "@/lib/uploads";
 import ScrollReveal from "@/components/site/ScrollReveal";
 
@@ -38,7 +39,7 @@ export default async function SiteLayout({ children, params }: Props) {
       <main id="main">{children}</main>
       <Footer lang={lang} settings={settings} />
       <ScrollReveal />
-      {chatEnabled && <ChatWidget lang={lang as Lang} direct={blobMode} />}
+      {chatEnabled && <ChatWidget lang={lang as Lang} direct={blobMode} pushKey={pushPublicKey} />}
     </>
   );
 }

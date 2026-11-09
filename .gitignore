@@ -4,6 +4,7 @@ node_modules
 .env.local
 data/content.json
 data/chats.json
+data/push.json
 data/uploads
 next-env.d.ts
 *.tsbuildinfo

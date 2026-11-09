@@ -1,8 +1,10 @@
+import { after } from "next/server";
 import { rateLimit } from "@/lib/db";
 import { addMessage, chatEnabled, createConversation, getConversation, getMessages, markSeen, updateConversation } from "@/lib/chat";
 import { clearVisitorChat, clientIp, json, sameOrigin, setVisitorChat, visitorChatId } from "@/lib/chat-session";
 import { EMAIL, readMessage, type ChatError } from "@/lib/chat-input";
 import { isLang } from "@/lib/i18n";
+import { clearChatSubscriptions, markActive, notifyNewMessage } from "@/lib/push";
 import type { Conversation } from "@/lib/types";
 
 /** What the visitor may see about their own conversation. */
@@ -25,9 +27,12 @@ export async function GET(req: Request) {
   }
   const url = new URL(req.url);
   const messages = await getMessages(id, Number(url.searchParams.get("after")) || 0);
-  if (url.searchParams.get("seen") === "1" && conversation.unreadVisitor > 0) {
-    await markSeen(id, "visitor");
-    conversation.unreadVisitor = 0;
+  if (url.searchParams.get("seen") === "1") {
+    await markActive(id, "visitor");
+    if (conversation.unreadVisitor > 0) {
+      await markSeen(id, "visitor");
+      conversation.unreadVisitor = 0;
+    }
   }
   return json({ conversation: view(conversation), messages });
 }
@@ -64,6 +69,8 @@ export async function POST(req: Request) {
     await setVisitorChat(id);
   }
   const message = await addMessage(conversation.id, "visitor", input.text, input.files, input.product);
+  const saved = conversation;
+  after(() => notifyNewMessage(saved, message));
   return json({ message, conversation: view({ ...conversation, status: "open" }) });
 }
 
@@ -84,6 +91,8 @@ export async function PATCH(req: Request) {
 /** Ends the chat in this browser. The studio keeps the conversation. */
 export async function DELETE(req: Request) {
   if (!sameOrigin(req)) return err({ error: "forbidden" }, 403);
+  const id = await visitorChatId();
+  if (id) await clearChatSubscriptions(id);
   await clearVisitorChat();
   return json({ ok: true });
 }

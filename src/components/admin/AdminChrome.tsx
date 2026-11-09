@@ -9,10 +9,12 @@ import AdminNav from "./AdminNav";
 import { AdminLangSwitch, useAdminT } from "./AdminI18n";
 import { useChatLive } from "./ChatLive";
 import { useInquiryLive } from "./InquiryLive";
+import { usePush } from "@/lib/push-client";
 
 /** Admin sidebar: fixed on desktop, a slide-in drawer behind a top bar on small screens. */
-export default function AdminChrome({ logo }: { logo: string }) {
+export default function AdminChrome({ logo, pushKey }: { logo: string; pushKey: string }) {
   const [open, setOpen] = useState(false);
+  const push = usePush({ url: "/api/admin/push", publicKey: pushKey, flag: "np_push_admin" });
   const { t } = useAdminT();
   const { unread } = useChatLive();
   const { newCount } = useInquiryLive();
@@ -56,7 +58,27 @@ export default function AdminChrome({ logo }: { logo: string }) {
         </svg>
         {t.nav.viewSite}
       </Link>
-      <form action={logout}>
+      {(push.state === "on" || push.state === "off") && (
+        <button
+          type="button"
+          role="switch"
+          aria-checked={push.state === "on"}
+          disabled={push.busy}
+          onClick={push.state === "on" ? push.disable : push.enable}
+          className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-mist hover:bg-white/6 hover:text-white disabled:opacity-60"
+        >
+          <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 2h-15l1.5-2ZM10 21h4" />
+          </svg>
+          <span className="flex-1">{t.nav.notifications}</span>
+          <span className="text-sm font-semibold">{push.state === "on" ? t.nav.notificationsOn : t.nav.notificationsOff}</span>
+        </button>
+      )}
+      {push.failed && <p role="alert" className="px-3.5 text-sm text-mist">{t.nav.notificationsFailed}</p>}
+      {push.state === "install" && <p className="px-3.5 py-2 text-sm text-mist">{t.nav.notificationsInstall}</p>}
+      {push.state === "denied" && <p className="px-3.5 py-2 text-sm text-mist">{t.nav.notificationsBlocked}</p>}
+      {/* a logged-out device must stop receiving customers' messages */}
+      <form action={logout} onSubmit={() => void (push.state === "on" && push.disable())}>
         <button className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-mist hover:bg-white/6 hover:text-white">
           <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l4-4-4-4M14 12H4" />

@@ -8,8 +8,15 @@ import { AdminI18nProvider } from "@/components/admin/AdminI18n";
 import { ChatLiveProvider } from "@/components/admin/ChatLive";
 import { InquiryLiveProvider } from "@/components/admin/InquiryLive";
 import { chatSummary } from "@/lib/chat";
+import { pushPublicKey } from "@/lib/push";
 
-export const metadata: Metadata = { title: "Admin | NordPrint Studio", robots: { index: false } };
+export const metadata: Metadata = {
+  title: "Admin | NordPrint Studio",
+  robots: { index: false },
+  // installs as its own app that opens on the chat
+  manifest: "/admin.webmanifest",
+  appleWebApp: { capable: true, title: "NP Admin" },
+};
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
@@ -19,7 +26,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <InquiryLiveProvider initial={inquirySummary(inquiries)}>
       <ChatLiveProvider initial={chat}>
         <div className="min-h-screen md:grid md:grid-cols-[256px_1fr]">
-          <AdminChrome logo={settings.logo} />
+          <AdminChrome logo={settings.logo} pushKey={pushPublicKey} />
           <main className="mx-auto w-full min-w-0 max-w-5xl px-5 py-8 md:px-10 md:py-12">
             <StorageWarning />
             {children}

@@ -5,6 +5,7 @@ import { t } from "@/lib/i18n";
 import type { ChatMessage, ChatProductRef, ChatStatus, Lang } from "@/lib/types";
 import type { BlobMode, UploadError } from "@/lib/upload-rules";
 import { CHAT_ABOUT_EVENT, errorInfo, mergeMessages, nextId, postMessage, request, usePoll, type Pending } from "@/lib/chat-client";
+import { usePush } from "@/lib/push-client";
 import { href } from "@/lib/routes";
 import ChatThread, { ProductRef } from "@/components/chat/ChatThread";
 import ChatComposer from "@/components/chat/ChatComposer";
@@ -15,6 +16,7 @@ type Poll = { conversation: View | null; messages?: ChatMessage[] };
 
 const FLAG = "np_chat_on";
 const SKIP_CONTACT = "np_chat_contact_skip";
+const SKIP_PUSH = "np_chat_push_skip";
 const hasFlag = () => document.cookie.split("; ").some((c) => c === `${FLAG}=1`);
 
 function ChatIcon({ className = "" }: { className?: string }) {
@@ -27,7 +29,7 @@ function ChatIcon({ className = "" }: { className?: string }) {
 }
 
 /** Lets visitors chat with the studio. Replies are written in the admin panel. */
-export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobMode }) {
+export default function ChatWidget({ lang, direct, pushKey }: { lang: Lang; direct: BlobMode; pushKey: string }) {
   const d = t(lang).chat;
   const order = t(lang).order;
   const locale = lang === "en" ? "en-GB" : "sv-SE";
@@ -47,9 +49,20 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
   const openRef = useRef(open);
   openRef.current = open;
 
+  const push = usePush({ url: "/api/push", publicKey: pushKey, flag: "np_push_chat", ready: active });
+  const [skipPush, setSkipPush] = useState(true);
+
   useEffect(() => {
     setActive(hasFlag());
     setSkipContact(localStorage.getItem(SKIP_CONTACT) === "1");
+    setSkipPush(localStorage.getItem(SKIP_PUSH) === "1");
+    // arriving from a notification: open the chat and tidy the address
+    const url = new URL(location.href);
+    if (url.searchParams.get("chat") === "1") {
+      setOpen(true);
+      url.searchParams.delete("chat");
+      history.replaceState(history.state, "", url);
+    }
   }, []);
 
   const errorText = useCallback(
@@ -233,6 +246,39 @@ export default function ChatWidget({ lang, direct }: { lang: Lang; direct: BlobM
           }
           footer={
             <>
+              {/* one question at a time: the e-mail card comes first */}
+              {active && !askContact && !skipPush && (push.state === "off" || push.state === "install") && (
+                <div className="mt-4 rounded-2xl bg-paper p-4 ring-1 ring-mist">
+                  <p className="font-semibold">{d.pushTitle}</p>
+                  <p className="mt-0.5 text-sm text-fjord">{push.state === "install" ? d.pushInstall : d.pushText}</p>
+                  {push.failed && <p role="alert" className="mt-2 text-sm font-medium text-hallon-dark">{d.pushFailed}</p>}
+                  <div className="mt-3 flex items-center gap-3">
+                    {push.state === "off" && (
+                      <button type="button" onClick={push.enable} disabled={push.busy} className="btn btn-primary px-4 py-2.5 text-sm">
+                        {d.pushEnable}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.setItem(SKIP_PUSH, "1");
+                        setSkipPush(true);
+                      }}
+                      className="text-sm font-medium text-fjord underline-offset-4 hover:text-granite hover:underline"
+                    >
+                      {d.skip}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {active && push.state === "on" && (
+                <p className="mt-4 text-center text-xs text-fjord">
+                  {d.pushEnabled}{" "}
+                  <button type="button" onClick={push.disable} disabled={push.busy} className="font-medium underline underline-offset-2 hover:text-granite">
+                    {d.pushDisable}
+                  </button>
+                </p>
+              )}
               {askContact && (
                 <ContactCard
                   lang={lang}

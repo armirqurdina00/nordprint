@@ -56,7 +56,7 @@ export async function POST(req: Request) {
   if ("error" in input) return err(input);
 
   if (!conversation) {
-    if (!(await rateLimit(`chat-new:${ip}`, 6, 3600))) return err({ error: "rate" }, 429);
+    if (!(await rateLimit(`chat-new:${ip}`, 20, 3600))) return err({ error: "rate" }, 429);
     const lang = formLang;
     const page = String(form.get("page") ?? "");
     conversation = await createConversation({
